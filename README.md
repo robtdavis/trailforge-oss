@@ -81,6 +81,7 @@ sf data tree import -p ./data/trailforge-seed-plan.json
 # Open TrailForge
 sf org open
 
+```
 ## 📝 License
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
