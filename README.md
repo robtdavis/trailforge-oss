@@ -66,7 +66,7 @@ A full data-model walkthrough lives in:
 
 ```bash
 # Clone the repo
-git clone https://github.com/your-org/trailforge.git
+git clone https://github.com/robtdavis/trailforge-oss.git 
 cd trailforge
 
 # Authorize an org
