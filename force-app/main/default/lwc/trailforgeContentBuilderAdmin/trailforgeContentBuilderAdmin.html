@@ -1,0 +1,393 @@
+<template>
+    <lightning-card title="Content Builder" icon-name="custom:custom24">
+        
+        <!-- Progress Indicator -->
+        <div class="slds-m-around_medium">
+            <lightning-progress-indicator current-step={currentStep} type="path" variant="base">
+                <lightning-progress-step label="Course" value="1"></lightning-progress-step>
+                <lightning-progress-step label="Modules" value="2"></lightning-progress-step>
+                <lightning-progress-step label="Lessons" value="3"></lightning-progress-step>
+                <lightning-progress-step label="Review" value="4"></lightning-progress-step>
+                <lightning-progress-step label="Finish" value="5"></lightning-progress-step>
+            </lightning-progress-indicator>
+        </div>
+
+        <!-- Error/Success Messages -->
+        <template if:true={errorMessage}>
+            <div class="slds-m-around_medium">
+                <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                    <span class="slds-assistive-text">Error</span>
+                    <h2>{errorMessage}</h2>
+                </div>
+            </div>
+        </template>
+
+        <template if:true={successMessage}>
+            <div class="slds-m-around_medium">
+                <div class="slds-notify slds-notify_alert slds-alert_success" role="alert">
+                    <span class="slds-assistive-text">Success</span>
+                    <h2>{successMessage}</h2>
+                </div>
+            </div>
+        </template>
+
+        <!-- Step 1: Course Details -->
+        <template if:true={isStep1}>
+            <div class="slds-m-around_medium">
+                <h2 class="slds-text-heading_medium slds-m-bottom_medium">Step 1: Course Details</h2>
+                
+                <lightning-input 
+                    label="Course Name" 
+                    value={courseData.name} 
+                    onchange={handleCourseNameChange}
+                    required
+                    class="slds-m-bottom_small">
+                </lightning-input>
+                
+                <lightning-textarea 
+                    label="Description" 
+                    value={courseData.description} 
+                    onchange={handleCourseDescriptionChange}
+                    class="slds-m-bottom_small">
+                </lightning-textarea>
+                
+                <lightning-input 
+                    type="checkbox" 
+                    label="Active" 
+                    checked={courseData.active} 
+                    onchange={handleCourseActiveChange}
+                    class="slds-m-bottom_small">
+                </lightning-input>
+            </div>
+        </template>
+
+        <!-- Step 2: Modules -->
+        <template if:true={isStep2}>
+            <div class="slds-m-around_medium">
+                <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_medium">
+                    <h2 class="slds-text-heading_medium slds-col">Step 2: Modules for "{courseData.name}"</h2>
+                    <lightning-button 
+                        label="Add Module" 
+                        icon-name="utility:add" 
+                        onclick={handleAddModule}
+                        class="slds-col_bump-left">
+                    </lightning-button>
+                </div>
+
+                <template if:false={hasModules}>
+                    <div class="slds-illustration slds-illustration_small slds-p-around_medium">
+                        <p class="slds-text-body_regular slds-text-color_weak">
+                            No modules added yet. Click "Add Module" to create your first module.
+                        </p>
+                    </div>
+                </template>
+
+                <template if:true={hasModules}>
+                    <template for:each={courseData.modules} for:item="module" for:index="moduleIndex">
+                        <div key={module.key} class="slds-box slds-m-bottom_small">
+                            <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_small">
+                                <span class="slds-badge slds-badge_inverse slds-m-right_small">Module {module.displayOrder}</span>
+                                <lightning-button-icon 
+                                    icon-name="utility:delete" 
+                                    alternative-text="Delete Module"
+                                    data-module-index={moduleIndex}
+                                    onclick={handleDeleteModule}
+                                    class="slds-col_bump-left">
+                                </lightning-button-icon>
+                            </div>
+                            
+                            <lightning-input 
+                                label="Module Name" 
+                                value={module.name} 
+                                data-module-index={moduleIndex}
+                                data-field="name"
+                                onchange={handleModuleFieldChange}
+                                required
+                                class="slds-m-bottom_x-small">
+                            </lightning-input>
+                            
+                            <lightning-textarea 
+                                label="Summary" 
+                                value={module.summary} 
+                                data-module-index={moduleIndex}
+                                data-field="summary"
+                                onchange={handleModuleFieldChange}
+                                class="slds-m-bottom_x-small">
+                            </lightning-textarea>
+                        </div>
+                    </template>
+                </template>
+            </div>
+        </template>
+
+        <!-- Step 3: Lessons -->
+        <template if:true={isStep3}>
+            <div class="slds-m-around_medium">
+                <h2 class="slds-text-heading_medium slds-m-bottom_medium">Step 3: Lessons</h2>
+
+                <template for:each={courseData.modules} for:item="module" for:index="moduleIndex">
+                    <div key={module.key} class="slds-box slds-m-bottom_medium">
+                        <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_small">
+                            <h3 class="slds-text-heading_small slds-col">
+                                <span class="slds-badge slds-m-right_small">Module {module.displayOrder}</span>
+                                {module.name}
+                            </h3>
+                            <lightning-button 
+                                label="Add Lesson" 
+                                icon-name="utility:add" 
+                                variant="neutral"
+                                size="small"
+                                data-module-index={moduleIndex}
+                                onclick={handleAddLesson}
+                                class="slds-col_bump-left">
+                            </lightning-button>
+                        </div>
+
+                        <template if:false={module.hasLessons}>
+                            <p class="slds-text-body_regular slds-text-color_weak slds-p-around_small">
+                                No lessons in this module. Click "Add Lesson" to add one.
+                            </p>
+                        </template>
+
+                        <template if:true={module.hasLessons}>
+                            <template for:each={module.lessons} for:item="lesson" for:index="lessonIndex">
+                                <div key={lesson.key} class="slds-box slds-box_x-small slds-m-bottom_x-small slds-m-left_medium">
+                                    <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_x-small">
+                                        <span class="slds-badge slds-m-right_small">Lesson {lesson.displayOrder}</span>
+                                        <lightning-button-icon 
+                                            icon-name="utility:delete" 
+                                            alternative-text="Delete Lesson"
+                                            size="small"
+                                            data-module-index={moduleIndex}
+                                            data-lesson-index={lessonIndex}
+                                            onclick={handleDeleteLesson}
+                                            class="slds-col_bump-left">
+                                        </lightning-button-icon>
+                                    </div>
+                                    
+                                    <div class="slds-grid slds-gutters">
+                                        <div class="slds-col slds-size_1-of-2">
+                                            <lightning-input 
+                                                label="Lesson Name" 
+                                                value={lesson.name} 
+                                                data-module-index={moduleIndex}
+                                                data-lesson-index={lessonIndex}
+                                                data-field="name"
+                                                onchange={handleLessonFieldChange}
+                                                required>
+                                            </lightning-input>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-2">
+                                            <lightning-combobox 
+                                                label="Content Type" 
+                                                value={lesson.contentType} 
+                                                options={contentTypeOptions}
+                                                data-module-index={moduleIndex}
+                                                data-lesson-index={lessonIndex}
+                                                data-field="contentType"
+                                                onchange={handleLessonFieldChange}>
+                                            </lightning-combobox>
+                                        </div>
+                                    </div>
+
+                                    <!-- Quiz Selection -->
+                                    <div class="slds-m-top_small">
+                                        <div class="slds-grid slds-grid_vertical-align-end slds-gutters">
+                                            <div class="slds-col slds-size_2-of-3">
+                                                <lightning-combobox 
+                                                    label="Assign Quiz (Optional)" 
+                                                    value={lesson.quizId} 
+                                                    options={quizOptions}
+                                                    placeholder="Select a quiz..."
+                                                    data-module-index={moduleIndex}
+                                                    data-lesson-index={lessonIndex}
+                                                    data-field="quizId"
+                                                    onchange={handleLessonFieldChange}>
+                                                </lightning-combobox>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-3">
+                                                <lightning-button 
+                                                    label="Create New Quiz" 
+                                                    icon-name="utility:add"
+                                                    variant="neutral"
+                                                    data-module-index={moduleIndex}
+                                                    data-lesson-index={lessonIndex}
+                                                    onclick={handleCreateQuiz}>
+                                                </lightning-button>
+                                            </div>
+                                        </div>
+                                        <template if:true={lesson.quizName}>
+                                            <p class="slds-text-body_small slds-text-color_success slds-m-top_xx-small">
+                                                Quiz assigned: {lesson.quizName}
+                                            </p>
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <!-- Step 4: Review -->
+        <template if:true={isStep4}>
+            <div class="slds-m-around_medium">
+                <h2 class="slds-text-heading_medium slds-m-bottom_medium">Step 4: Review & Save</h2>
+
+                <div class="slds-box slds-m-bottom_medium">
+                    <h3 class="slds-text-heading_small slds-m-bottom_small">Course</h3>
+                    <dl class="slds-dl_horizontal">
+                        <dt class="slds-dl_horizontal__label">Name:</dt>
+                        <dd class="slds-dl_horizontal__detail">{courseData.name}</dd>
+                        <dt class="slds-dl_horizontal__label">Description:</dt>
+                        <dd class="slds-dl_horizontal__detail">{courseData.description}</dd>
+                        <dt class="slds-dl_horizontal__label">Active:</dt>
+                        <dd class="slds-dl_horizontal__detail">{courseActiveLabel}</dd>
+                    </dl>
+                </div>
+
+                <template if:true={hasModules}>
+                    <div class="slds-box">
+                        <h3 class="slds-text-heading_small slds-m-bottom_small">Structure</h3>
+                        <template for:each={courseData.modules} for:item="module">
+                            <div key={module.key} class="slds-m-bottom_small">
+                                <p class="slds-text-body_regular">
+                                    <strong>Module {module.displayOrder}:</strong> {module.name}
+                                </p>
+                                <template if:true={module.hasLessons}>
+                                    <ul class="slds-list_dotted slds-m-left_medium">
+                                        <template for:each={module.lessons} for:item="lesson">
+                                            <li key={lesson.key}>
+                                                Lesson {lesson.displayOrder}: {lesson.name} 
+                                                <template if:true={lesson.contentType}>
+                                                    ({lesson.contentType})
+                                                </template>
+                                                <template if:true={lesson.quizName}>
+                                                    - Quiz: {lesson.quizName}
+                                                </template>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <!-- Step 5: Finish -->
+        <template if:true={isStep5}>
+            <div class="slds-m-around_medium slds-text-align_center">
+                <div class="slds-illustration slds-illustration_large">
+                    <lightning-icon icon-name="action:approval" size="large" class="slds-m-bottom_medium"></lightning-icon>
+                    <h2 class="slds-text-heading_large slds-m-bottom_small slds-text-color_success">
+                        Course Created Successfully!
+                    </h2>
+                </div>
+                
+                <div class="slds-box slds-m-vertical_medium slds-p-around_medium">
+                    <h3 class="slds-text-heading_small slds-m-bottom_medium">Summary</h3>
+                    <div class="slds-grid slds-grid_align-center slds-gutters">
+                        <div class="slds-col slds-p-around_small">
+                            <div class="slds-text-heading_large">{creationResult.courseName}</div>
+                            <div class="slds-text-body_small slds-text-color_weak">Course Name</div>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-grid_align-center slds-gutters slds-m-top_medium">
+                        <div class="slds-col slds-p-around_small slds-box slds-box_x-small">
+                            <div class="slds-text-heading_medium">{creationResult.moduleCount}</div>
+                            <div class="slds-text-body_small slds-text-color_weak">Modules</div>
+                        </div>
+                        <div class="slds-col slds-p-around_small slds-box slds-box_x-small">
+                            <div class="slds-text-heading_medium">{creationResult.lessonCount}</div>
+                            <div class="slds-text-body_small slds-text-color_weak">Lessons</div>
+                        </div>
+                        <div class="slds-col slds-p-around_small slds-box slds-box_x-small">
+                            <div class="slds-text-heading_medium">{creationResult.quizCount}</div>
+                            <div class="slds-text-body_small slds-text-color_weak">Quizzes Assigned</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slds-m-top_large">
+                    <lightning-button 
+                        label="View Course" 
+                        variant="brand"
+                        onclick={handleViewCourse}
+                        class="slds-m-right_small">
+                    </lightning-button>
+                    <lightning-button 
+                        label="Create Another Course" 
+                        variant="neutral"
+                        onclick={handleCreateAnother}>
+                    </lightning-button>
+                </div>
+            </div>
+        </template>
+
+        <!-- Navigation Buttons -->
+        <template if:false={isStep5}>
+            <div class="slds-m-around_medium slds-grid">
+                <template if:false={isStep1}>
+                    <lightning-button 
+                        label="Previous" 
+                        onclick={handlePrevious}
+                        class="slds-m-right_small">
+                    </lightning-button>
+                </template>
+                
+                <div class="slds-col_bump-left">
+                    <template if:false={isStep4}>
+                        <lightning-button 
+                            label="Next" 
+                            variant="brand"
+                            onclick={handleNext}
+                            disabled={isNextDisabled}>
+                        </lightning-button>
+                    </template>
+                    
+                    <template if:true={isStep4}>
+                        <lightning-button 
+                            label="Save Course" 
+                            variant="brand"
+                            onclick={handleSave}
+                            disabled={isSaving}>
+                        </lightning-button>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+    </lightning-card>
+
+    <!-- Quiz Builder Modal -->
+    <template if:true={showQuizModal}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning-button-icon 
+                        icon-name="utility:close" 
+                        alternative-text="Close"
+                        onclick={handleCloseQuizModal}
+                        class="slds-modal__close">
+                    </lightning-button-icon>
+                    <h2 class="slds-modal__title">Create New Quiz</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" style="height: 70vh; overflow: auto;">
+                    <c-quiz-builder-admin 
+                        course-id={quizContext.courseId}
+                        lesson-id={quizContext.lessonId}
+                        onquizcreated={handleQuizCreated}>
+                    </c-quiz-builder-admin>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancel" onclick={handleCloseQuizModal}></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+</template>

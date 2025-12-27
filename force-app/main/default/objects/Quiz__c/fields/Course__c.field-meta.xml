@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Course__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>The course this quiz is associated with (for course-level quizzes)</description>
+    <inlineHelpText>Select the course this quiz belongs to (required if Level = Course)</inlineHelpText>
+    <label>Course</label>
+    <referenceTo>Course__c</referenceTo>
+    <relationshipLabel>Quizzes</relationshipLabel>
+    <relationshipName>Quizzes</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

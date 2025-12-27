@@ -1,0 +1,409 @@
+<template>
+    <lightning-card title="Quiz Builder" icon-name="custom:custom63">
+        
+        <!-- Error/Success Messages -->
+        <div if:true={showError} class="slds-m-around_medium">
+            <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                <span class="slds-assistive-text">Error</span>
+                <h2>{errorMessage}</h2>
+            </div>
+        </div>
+        
+        <div if:true={showSuccess} class="slds-m-around_medium">
+            <div class="slds-notify slds-notify_alert slds-alert_success" role="alert">
+                <span class="slds-assistive-text">Success</span>
+                <h2>{successMessage}</h2>
+            </div>
+        </div>
+        
+        <div class="slds-grid slds-gutters">
+            
+            <!-- Left Panel: Quiz List -->
+            <div class="slds-col slds-size_1-of-4">
+                <div class="slds-box slds-m-around_small">
+                    <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_small">
+                        <h3 class="slds-text-heading_small slds-col">Quizzes</h3>
+                        <lightning-button 
+                            label="New Quiz" 
+                            icon-name="utility:add"
+                            variant="brand"
+                            onclick={handleNewQuiz}
+                            class="slds-col_bump-left">
+                        </lightning-button>
+                    </div>
+                    
+                    <lightning-input 
+                        type="search"
+                        label="Search Quizzes"
+                        variant="label-hidden"
+                        placeholder="Search quizzes..."
+                        value={searchTerm}
+                        onchange={handleSearch}>
+                    </lightning-input>
+                    
+                    <div class="quiz-list slds-m-top_small">
+                        <template if:true={hasQuizzes}>
+                            <template for:each={filteredQuizzes} for:item="quiz">
+                                <div key={quiz.quizId} 
+                                     class={getQuizClass}
+                                     data-quiz-id={quiz.quizId}
+                                     onclick={handleQuizSelect}>
+                                    <div class="slds-grid slds-grid_vertical-align-center">
+                                        <div class="slds-col">
+                                            <div class="slds-text-body_small slds-text-color_weak">{quiz.level}</div>
+                                            <div class="slds-text-heading_small">{quiz.name}</div>
+                                            <div class="slds-text-body_small">
+                                                {quiz.questionCount} questions • {quiz.passingScore}% pass
+                                            </div>
+                                            <template if:true={quiz.assignedToName}>
+                                                <div class="slds-text-body_small slds-text-color_weak">
+                                                    {quiz.assignedToName}
+                                                </div>
+                                            </template>
+                                        </div>
+                                        <div class="slds-col_bump-left">
+                                            <template if:true={quiz.isActive}>
+                                                <lightning-badge label="Active" variant="success"></lightning-badge>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </template>
+                        
+                        <template if:false={hasQuizzes}>
+                            <div class="slds-text-align_center slds-m-vertical_medium slds-text-color_weak">
+                                <p>No quizzes found</p>
+                                <p class="slds-text-body_small">Click "New Quiz" to create one</p>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Panel: Quiz Editor -->
+            <div class="slds-col slds-size_3-of-4">
+                <template if:true={selectedQuizId}>
+                    <div class="slds-box slds-m-around_small">
+                        
+                        <!-- Quiz Metadata -->
+                        <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input 
+                                    label="Quiz Name"
+                                    value={quizDetail.name}
+                                    onchange={handleFieldChange}
+                                    data-field="name"
+                                    required>
+                                </lightning-input>
+                            </div>
+                            
+                            <div class="slds-col slds-size_1-of-4">
+                                <lightning-combobox
+                                    label="Level"
+                                    value={quizDetail.level}
+                                    options={levelOptions}
+                                    onchange={handleFieldChange}
+                                    data-field="level"
+                                    required>
+                                </lightning-combobox>
+                            </div>
+                            
+                            <div class="slds-col slds-size_1-of-4">
+                                <lightning-input 
+                                    label="Passing Score (%)"
+                                    type="number"
+                                    value={quizDetail.passingScore}
+                                    onchange={handleFieldChange}
+                                    data-field="passingScore"
+                                    min="0"
+                                    max="100"
+                                    required>
+                                </lightning-input>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                            <div class="slds-col slds-size_1-of-2">
+                                <template if:true={isLessonLevel}>
+                                    <template if:true={hasProvidedContext}>
+                                        <!-- Context provided: show read-only lesson info -->
+                                        <lightning-input 
+                                            label="Lesson"
+                                            value={lessonName}
+                                            readonly
+                                            disabled
+                                            required>
+                                        </lightning-input>
+                                    </template>
+                                    <template if:false={hasProvidedContext}>
+                                        <!-- No context: show lookup via record edit form -->
+                                        <lightning-record-edit-form object-api-name="Quiz__c">
+                                            <lightning-input-field 
+                                                field-name="Lesson__c"
+                                                value={quizDetail.lessonId}
+                                                onchange={handleLessonLookupChange}
+                                                required>
+                                            </lightning-input-field>
+                                        </lightning-record-edit-form>
+                                    </template>
+                                </template>
+                                
+                                <template if:true={isCourseLevel}>
+                                    <template if:true={hasProvidedContext}>
+                                        <!-- Context provided: show read-only course info -->
+                                        <lightning-input 
+                                            label="Course"
+                                            value={courseName}
+                                            readonly
+                                            disabled
+                                            required>
+                                        </lightning-input>
+                                    </template>
+                                    <template if:false={hasProvidedContext}>
+                                        <!-- No context: show lookup via record edit form -->
+                                        <lightning-record-edit-form object-api-name="Quiz__c">
+                                            <lightning-input-field 
+                                                field-name="Course__c"
+                                                value={quizDetail.courseId}
+                                                onchange={handleCourseLookupChange}
+                                                required>
+                                            </lightning-input-field>
+                                        </lightning-record-edit-form>
+                                    </template>
+                                </template>
+                            </div>
+                            
+                            <div class="slds-col slds-size_1-of-4">
+                                <lightning-input 
+                                    label="Sort Order"
+                                    type="number"
+                                    value={quizDetail.sortOrder}
+                                    onchange={handleFieldChange}
+                                    data-field="sortOrder"
+                                    min="0">
+                                </lightning-input>
+                            </div>
+                            
+                            <div class="slds-col slds-size_1-of-4">
+                                <div class="slds-form-element slds-m-top_medium">
+                                    <lightning-input 
+                                        label="Active"
+                                        type="checkbox"
+                                        checked={quizDetail.isActive}
+                                        onchange={handleFieldChange}
+                                        data-field="isActive">
+                                    </lightning-input>
+                                    <lightning-input 
+                                        label="Allow Retakes"
+                                        type="checkbox"
+                                        checked={quizDetail.allowRetakes}
+                                        onchange={handleFieldChange}
+                                        data-field="allowRetakes">
+                                    </lightning-input>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <lightning-textarea 
+                            label="Instructions"
+                            value={quizDetail.instructions}
+                            onchange={handleFieldChange}
+                            data-field="instructions"
+                            rows="2">
+                        </lightning-textarea>
+                        
+                        <div class="slds-m-top_medium slds-border_top slds-p-top_medium">
+                            
+                            <!-- Questions Section -->
+                            <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_small">
+                                <h3 class="slds-text-heading_small slds-col">Questions ({questionCount})</h3>
+                                <lightning-button 
+                                    label="Add Question"
+                                    icon-name="utility:add"
+                                    onclick={handleAddQuestion}
+                                    class="slds-col_bump-left">
+                                </lightning-button>
+                            </div>
+                            
+                            <template if:true={hasQuestions}>
+                                <template for:each={quizDetail.questions} for:item="question" for:index="qIndex">
+                                    <div key={question.questionId} class="slds-box slds-m-bottom_small">
+                                        
+                                        <div class="slds-grid slds-grid_vertical-align-start slds-gutters">
+                                            <div class="slds-col slds-size_1-of-12">
+                                                <div class="slds-text-heading_medium slds-text-color_weak slds-m-top_small">
+                                                    {question.displayNumber}
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="slds-col slds-size_10-of-12">
+                                                <lightning-textarea
+                                                    label="Question Text"
+                                                    value={question.questionText}
+                                                    onchange={handleQuestionChange}
+                                                    data-question-index={qIndex}
+                                                    data-field="questionText"
+                                                    required>
+                                                </lightning-textarea>
+                                                
+                                                <div class="slds-grid slds-gutters slds-m-top_small">
+                                                    <div class="slds-col slds-size_1-of-3">
+                                                        <lightning-combobox
+                                                            label="Question Type"
+                                                            value={question.questionType}
+                                                            options={questionTypeOptions}
+                                                            onchange={handleQuestionChange}
+                                                            data-question-index={qIndex}
+                                                            data-field="questionType"
+                                                            disabled>
+                                                        </lightning-combobox>
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-3">
+                                                        <lightning-input
+                                                            label="Points"
+                                                            type="number"
+                                                            value={question.points}
+                                                            onchange={handleQuestionChange}
+                                                            data-question-index={qIndex}
+                                                            data-field="points"
+                                                            min="0">
+                                                        </lightning-input>
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-3">
+                                                        <div class="slds-m-top_medium">
+                                                            <lightning-input
+                                                                label="Required"
+                                                                type="checkbox"
+                                                                checked={question.required}
+                                                                onchange={handleQuestionChange}
+                                                                data-question-index={qIndex}
+                                                                data-field="required">
+                                                            </lightning-input>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Answer Options -->
+                                                <div class="slds-m-top_medium">
+                                                    <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_x-small">
+                                                        <h4 class="slds-text-heading_x-small slds-col">Answer Options</h4>
+                                                        <lightning-button
+                                                            label="Add Option"
+                                                            icon-name="utility:add"
+                                                            onclick={handleAddOption}
+                                                            data-question-index={qIndex}
+                                                            class="slds-col_bump-left"
+                                                            variant="base"
+                                                            size="small">
+                                                        </lightning-button>
+                                                    </div>
+                                                    
+                                                    <template for:each={question.options} for:item="option" for:index="oIndex">
+                                                        <div key={option.optionId} class="slds-grid slds-gutters slds-m-bottom_x-small">
+                                                            <div class="slds-col slds-size_1-of-12">
+                                                                <div class="slds-form-element slds-m-top_small">
+                                                                    <lightning-input
+                                                                        type="checkbox"
+                                                                        label="Correct"
+                                                                        variant="label-hidden"
+                                                                        checked={option.isCorrect}
+                                                                        onchange={handleOptionChange}
+                                                                        data-question-index={qIndex}
+                                                                        data-option-index={oIndex}
+                                                                        data-field="isCorrect"
+                                                                        title="Mark as correct answer">
+                                                                    </lightning-input>
+                                                                </div>
+                                                            </div>
+                                                            <div class="slds-col slds-size_10-of-12">
+                                                                <lightning-input
+                                                                    label="Answer Text"
+                                                                    variant="label-hidden"
+                                                                    value={option.answerText}
+                                                                    onchange={handleOptionChange}
+                                                                    data-question-index={qIndex}
+                                                                    data-option-index={oIndex}
+                                                                    data-field="answerText"
+                                                                    placeholder="Enter answer option...">
+                                                                </lightning-input>
+                                                            </div>
+                                                            <div class="slds-col slds-size_1-of-12">
+                                                                <lightning-button-icon
+                                                                    icon-name="utility:delete"
+                                                                    alternative-text="Delete option"
+                                                                    variant="bare"
+                                                                    onclick={handleDeleteOption}
+                                                                    data-question-index={qIndex}
+                                                                    data-option-index={oIndex}
+                                                                    class="slds-m-top_small">
+                                                                </lightning-button-icon>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="slds-col slds-size_1-of-12 slds-text-align_right">
+                                                <lightning-button-icon
+                                                    icon-name="utility:delete"
+                                                    alternative-text="Delete question"
+                                                    variant="bare"
+                                                    onclick={handleDeleteQuestion}
+                                                    data-question-index={qIndex}
+                                                    class="slds-m-top_small">
+                                                </lightning-button-icon>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </template>
+                            </template>
+                            
+                            <template if:false={hasQuestions}>
+                                <div class="slds-text-align_center slds-m-vertical_medium slds-text-color_weak">
+                                    <p>No questions added yet</p>
+                                    <p class="slds-text-body_small">Click "Add Question" to create one</p>
+                                </div>
+                            </template>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="slds-grid slds-grid_align-end slds-m-top_large">
+                            <lightning-button
+                                label="Archive Quiz"
+                                onclick={handleArchiveQuiz}
+                                variant="destructive-text"
+                                class="slds-m-right_small">
+                            </lightning-button>
+                            <lightning-button
+                                label="Cancel"
+                                onclick={handleCancel}>
+                            </lightning-button>
+                            <lightning-button
+                                label="Save Quiz"
+                                variant="brand"
+                                onclick={handleSave}
+                                class="slds-m-left_small">
+                            </lightning-button>
+                        </div>
+                        
+                    </div>
+                </template>
+                
+                <template if:false={selectedQuizId}>
+                    <div class="slds-text-align_center slds-m-vertical_xx-large slds-text-color_weak">
+                        <lightning-icon icon-name="custom:custom63" size="large"></lightning-icon>
+                        <p class="slds-m-top_medium slds-text-heading_small">Select a quiz to edit</p>
+                        <p class="slds-text-body_small">Or create a new quiz to get started</p>
+                    </div>
+                </template>
+            </div>
+            
+        </div>
+        
+        <!-- Lookup Modal (placeholder for future enhancement) -->
+        <!-- Would contain lightning-record-picker or custom lookup -->
+        
+    </lightning-card>
+</template>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>TrailForge Lesson Modal</masterLabel>
+    <description>Modal component for displaying lesson content with slide navigation</description>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__HomePage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__AppPage,lightning__RecordPage,lightning__HomePage">
+            <property name="showCompleteButton" type="Boolean" default="false" label="Show Complete Button" description="When enabled, shows the Complete Lesson button on the last slide"/>
+            <property name="modalSize" type="String" default="medium" label="Modal Size" datasource="medium,large,x-large" description="Size of the modal window"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

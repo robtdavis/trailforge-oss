@@ -1,0 +1,43 @@
+:host {
+    display: block;
+}
+
+/* Contacts table container */
+.contacts-table {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.25rem;
+}
+
+/* Course list items */
+.course-item {
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.course-item:hover {
+    background-color: #f3f3f3;
+}
+
+/* Enrollment results table */
+.enrollment-results table {
+    font-size: 0.875rem;
+}
+
+/* Selected course box success theme override */
+.slds-theme_success {
+    background-color: #e8f5e9;
+    border-color: #4caf50;
+}
+
+/* Progress indicator clickable steps */
+lightning-progress-step {
+    cursor: pointer;
+}
+
+/* Pill container scroll */
+lightning-pill-container {
+    max-height: 120px;
+    overflow-y: auto;
+}

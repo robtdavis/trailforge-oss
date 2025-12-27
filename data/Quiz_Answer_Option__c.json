@@ -1,0 +1,476 @@
+{
+    "records": [
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef1"
+            },
+            "Name": "OPT-00040",
+            "Quiz_Question__c": "@Quiz_Question__cRef1",
+            "Answer_Text__c": "Follow social media influencers",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 1
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef2"
+            },
+            "Name": "OPT-00041",
+            "Quiz_Question__c": "@Quiz_Question__cRef1",
+            "Answer_Text__c": "Rely only on AI-generated advice",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 2
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef3"
+            },
+            "Name": "OPT-00042",
+            "Quiz_Question__c": "@Quiz_Question__cRef1",
+            "Answer_Text__c": "Use trusted frameworks and security resources",
+            "Is_Correct__c": true,
+            "Is_Active__c": true,
+            "Sort_Order__c": 3
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef4"
+            },
+            "Name": "OPT-00043",
+            "Quiz_Question__c": "@Quiz_Question__cRef1",
+            "Answer_Text__c": "Experiment freely without guidelines",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 4
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef5"
+            },
+            "Name": "OPT-00005",
+            "Quiz_Question__c": "@Quiz_Question__cRef10",
+            "Answer_Text__c": "To make final decisions faster than people",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 2
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef6"
+            },
+            "Name": "OPT-00010",
+            "Quiz_Question__c": "@Quiz_Question__cRef2",
+            "Answer_Text__c": "A sanitized scenario using placeholders",
+            "Is_Correct__c": true,
+            "Is_Active__c": true
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef7"
+            },
+            "Name": "OPT-00014",
+            "Quiz_Question__c": "@Quiz_Question__cRef6",
+            "Answer_Text__c": "Because AI tools ignore numbers anyway",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 2
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef8"
+            },
+            "Name": "OPT-00008",
+            "Quiz_Question__c": "@Quiz_Question__cRef2",
+            "Answer_Text__c": "A customer’s full name and account number",
+            "Is_Correct__c": false,
+            "Is_Active__c": true
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef9"
+            },
+            "Name": "OPT-00032",
+            "Quiz_Question__c": "@Quiz_Question__cRef9",
+            "Answer_Text__c": "Employees lack technical skill",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 1
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef10"
+            },
+            "Name": "OPT-00037",
+            "Quiz_Question__c": "@Quiz_Question__cRef5",
+            "Answer_Text__c": "Assuming silence means approval",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 3
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef11"
+            },
+            "Name": "OPT-00038",
+            "Quiz_Question__c": "@Quiz_Question__cRef5",
+            "Answer_Text__c": "Asking for guidance when unsure about data sensitivity",
+            "Is_Correct__c": true,
+            "Is_Active__c": true,
+            "Sort_Order__c": 1
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef12"
+            },
+            "Name": "OPT-00039",
+            "Quiz_Question__c": "@Quiz_Question__cRef5",
+            "Answer_Text__c": "Trusting AI output if it sounds confident",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 2
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef13"
+            },
+            "Name": "OPT-00009",
+            "Quiz_Question__c": "@Quiz_Question__cRef2",
+            "Answer_Text__c": "A contract draft with internal legal notes",
+            "Is_Correct__c": false,
+            "Is_Active__c": true
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef14"
+            },
+            "Name": "OPT-00012",
+            "Quiz_Question__c": "@Quiz_Question__cRef6",
+            "Answer_Text__c": "Because training is less important than production",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 1
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef15"
+            },
+            "Name": "OPT-00017",
+            "Quiz_Question__c": "@Quiz_Question__cRef3",
+            "Answer_Text__c": "Rewriting a public blog post",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 2
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef16"
+            },
+            "Name": "OPT-00030",
+            "Quiz_Question__c": "@Quiz_Question__cRef8",
+            "Answer_Text__c": "“Draft a professional email about a delayed shipment using placeholders.”",
+            "Is_Correct__c": true,
+            "Is_Active__c": true,
+            "Sort_Order__c": 3
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef17"
+            },
+            "Name": "OPT-00036",
+            "Quiz_Question__c": "@Quiz_Question__cRef5",
+            "Answer_Text__c": "Using AI quickly to save time, even if unsure",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 4
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef18"
+            },
+            "Name": "OPT-00022",
+            "Quiz_Question__c": "@Quiz_Question__cRef4",
+            "Answer_Text__c": "Potential data exposure and compliance issues",
+            "Is_Correct__c": true,
+            "Is_Active__c": true,
+            "Sort_Order__c": 3
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef19"
+            },
+            "Name": "OPT-00007",
+            "Quiz_Question__c": "@Quiz_Question__cRef10",
+            "Answer_Text__c": "To replace human decision-making",
+            "Is_Correct__c": false,
+            "Is_Active__c": true
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef20"
+            },
+            "Name": "OPT-00011",
+            "Quiz_Question__c": "@Quiz_Question__cRef2",
+            "Answer_Text__c": "An API key to debug an error",
+            "Is_Correct__c": false,
+            "Is_Active__c": true
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef21"
+            },
+            "Name": "OPT-00004",
+            "Quiz_Question__c": "@Quiz_Question__cRef10",
+            "Answer_Text__c": "To assist with drafting, summarizing, and analysis while humans remain accountable",
+            "Is_Correct__c": true,
+            "Is_Active__c": true
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef22"
+            },
+            "Name": "OPT-00006",
+            "Quiz_Question__c": "@Quiz_Question__cRef10",
+            "Answer_Text__c": "To automate all repetitive tasks without oversight",
+            "Is_Correct__c": false,
+            "Is_Active__c": true
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef23"
+            },
+            "Name": "OPT-00018",
+            "Quiz_Question__c": "@Quiz_Question__cRef3",
+            "Answer_Text__c": "Handling a customer issue involving legal action",
+            "Is_Correct__c": true,
+            "Is_Active__c": true,
+            "Sort_Order__c": 3
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef24"
+            },
+            "Name": "OPT-00021",
+            "Quiz_Question__c": "@Quiz_Question__cRef4",
+            "Answer_Text__c": "Increased training costs",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 2
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef25"
+            },
+            "Name": "OPT-00023",
+            "Quiz_Question__c": "@Quiz_Question__cRef4",
+            "Answer_Text__c": "Formatting errors",
+            "Is_Correct__c": false,
+            "Is_Active__c": true
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef26"
+            },
+            "Name": "OPT-00024",
+            "Quiz_Question__c": "@Quiz_Question__cRef7",
+            "Answer_Text__c": "AI makes decisions and humans review them later if needed",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 1
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef27"
+            },
+            "Name": "OPT-00026",
+            "Quiz_Question__c": "@Quiz_Question__cRef7",
+            "Answer_Text__c": "AI output is trusted unless it seems obviously wrong",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 3
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef28"
+            },
+            "Name": "OPT-00031",
+            "Quiz_Question__c": "@Quiz_Question__cRef8",
+            "Answer_Text__c": "“Fix this error using our production database credentials.”",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 4
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef29"
+            },
+            "Name": "OPT-00013",
+            "Quiz_Question__c": "@Quiz_Question__cRef6",
+            "Answer_Text__c": "Because fictional data cannot be tied to real customers",
+            "Is_Correct__c": true,
+            "Is_Active__c": true,
+            "Sort_Order__c": 3
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef30"
+            },
+            "Name": "OPT-00015",
+            "Quiz_Question__c": "@Quiz_Question__cRef6",
+            "Answer_Text__c": "Because company policy does not apply to training",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 4
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef31"
+            },
+            "Name": "OPT-00016",
+            "Quiz_Question__c": "@Quiz_Question__cRef3",
+            "Answer_Text__c": "Drafting a meeting agenda",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 1
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef32"
+            },
+            "Name": "OPT-00019",
+            "Quiz_Question__c": "@Quiz_Question__cRef3",
+            "Answer_Text__c": "Summarizing a public article",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 4
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef33"
+            },
+            "Name": "OPT-00020",
+            "Quiz_Question__c": "@Quiz_Question__cRef4",
+            "Answer_Text__c": "Slower performance",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 1
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef34"
+            },
+            "Name": "OPT-00025",
+            "Quiz_Question__c": "@Quiz_Question__cRef7",
+            "Answer_Text__c": "Humans remain responsible for reviewing and approving AI output",
+            "Is_Correct__c": true,
+            "Is_Active__c": true,
+            "Sort_Order__c": 2
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef35"
+            },
+            "Name": "OPT-00027",
+            "Quiz_Question__c": "@Quiz_Question__cRef7",
+            "Answer_Text__c": "Humans only review AI output for external communications",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 4
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef36"
+            },
+            "Name": "OPT-00028",
+            "Quiz_Question__c": "@Quiz_Question__cRef8",
+            "Answer_Text__c": "“Rewrite this email to Customer John Smith about Order #4839201.”",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 1
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef37"
+            },
+            "Name": "OPT-00029",
+            "Quiz_Question__c": "@Quiz_Question__cRef8",
+            "Answer_Text__c": "“Analyze this internal HR performance report.”",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 2
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef38"
+            },
+            "Name": "OPT-00033",
+            "Quiz_Question__c": "@Quiz_Question__cRef9",
+            "Answer_Text__c": "AI tools are unreliable",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 2
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef39"
+            },
+            "Name": "OPT-00034",
+            "Quiz_Question__c": "@Quiz_Question__cRef9",
+            "Answer_Text__c": "People rush and skip basic checks",
+            "Is_Correct__c": true,
+            "Is_Active__c": true,
+            "Sort_Order__c": 3
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Answer_Option__c",
+                "referenceId": "Quiz_Answer_Option__cRef40"
+            },
+            "Name": "OPT-00035",
+            "Quiz_Question__c": "@Quiz_Question__cRef9",
+            "Answer_Text__c": "Policies are too complex",
+            "Is_Correct__c": false,
+            "Is_Active__c": true,
+            "Sort_Order__c": 4
+        }
+    ]
+}

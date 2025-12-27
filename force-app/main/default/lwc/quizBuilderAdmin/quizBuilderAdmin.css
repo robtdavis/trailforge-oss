@@ -1,0 +1,22 @@
+.quiz-list {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.quiz-item {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.quiz-item:hover {
+    background-color: #f3f3f3;
+}
+
+.quiz-item.selected {
+    background-color: #e8f4ff;
+    border-left: 4px solid #0176d3;
+}
+
+.slds-box {
+    background-color: white;
+}

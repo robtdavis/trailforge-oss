@@ -1,0 +1,44 @@
+<template>
+    <!-- Welcome View -->
+    <template if:true={isWelcome}>
+        <c-trailforge-welcome-shell
+            contact-id={context.contactId}
+            onnavigatetomylearning={handleNavigateToMyLearning}>
+        </c-trailforge-welcome-shell>
+    </template>
+    
+    <!-- My Learning View -->
+    <template if:true={isMyLearning}>
+        <c-my-learning-shell
+            contact-id={context.contactId}
+            onnavigatetowelcome={handleNavigateToWelcome}
+            onnavigatetolessonplayer={handleNavigateToLessonPlayer}>
+        </c-my-learning-shell>
+    </template>
+    
+    <!-- Lesson Player View -->
+    <template if:true={isLessonPlayer}>
+        <c-lesson-player
+            contact-id={context.contactId}
+            course-id={context.courseId}
+            enrollment-id={context.enrollmentId}
+            onnavigatetomylearning={handleNavigateBackToMyLearning}
+            onbackfromlesson={handleBackFromLesson}
+            onstartquiz={handleStartQuiz}
+            onreviewquiz={handleReviewQuiz}>
+        </c-lesson-player>
+    </template>
+    
+    <!-- Quiz Player View -->
+    <template if:true={isQuizPlayer}>
+        <c-trail-forge-quiz-player
+            contact-id={context.contactId}
+            quiz-id={context.quizId}
+            lesson-id={context.lessonId}
+            enrollment-id={context.enrollmentId}
+            review-mode={quizReviewMode}
+            review-attempt-id={quizReviewAttemptId}
+            onbacktolesson={handleNavigateBackToLessonPlayer}>
+        </c-trail-forge-quiz-player>
+    </template>
+</template>

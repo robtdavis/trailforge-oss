@@ -1,0 +1,238 @@
+<template>
+    <lightning-card title="Lesson Player" icon-name="standard:marketing_actions">
+
+        <!-- Header Actions -->
+        <div slot="actions">
+            <lightning-button
+                label="Back"
+                variant="neutral"
+                icon-name="utility:back"
+                onclick={handleBack}>
+            </lightning-button>
+        </div>
+        
+        <!-- Loading State -->
+        <template if:true={isLoading}>
+            <div style="min-height: 400px; display: flex; align-items: center; justify-content: center;">
+                <div class="slds-text-align_center">
+                    <lightning-spinner alternative-text="Loading lesson player" size="large"></lightning-spinner>
+                    <p class="slds-text-align_center slds-text-body_regular slds-text-color_weak slds-m-top_medium">
+                        Loading your lesson…
+                    </p>
+                </div>
+            </div>
+        </template>
+
+        <!-- Error State -->
+        <template if:true={error}>
+            <div class="slds-p-around_medium">
+                <div class="slds-text-color_error">
+                    <lightning-icon icon-name="utility:error" 
+                                    alternative-text="Error" 
+                                    size="small" 
+                                    class="slds-m-right_small"></lightning-icon>
+                    {error}
+                </div>
+            </div>
+        </template>
+
+        <!-- Two-Panel Layout -->
+        <template if:true={hasModules}>
+            <div class="slds-p-around_medium">
+                <div class="slds-grid slds-gutters">
+                    
+                    <!-- LEFT PANEL: Course Tree (1/3 width) -->
+                    <div class="slds-col slds-size_1-of-3">
+                        <div class="slds-box slds-theme_shade" style="max-height: 600px; overflow-y: auto;">
+                            <h2 class="slds-text-heading_small slds-m-bottom_medium">
+                                {lessonContext.courseName}
+                            </h2>
+
+                            <template for:each={lessonContext.modules} for:item="module">
+                                <div key={module.moduleId} class="slds-m-bottom_medium">
+                                    <h3 class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">
+                                        <lightning-icon icon-name="standard:folder" size="x-small" class="slds-m-right_xx-small"></lightning-icon>
+                                        {module.moduleName}
+                                        <template if:true={module.isModuleCompleted}>
+                                            <lightning-icon icon-name="utility:check" 
+                                                            variant="success" 
+                                                            alternative-text="Module Completed"
+                                                            size="x-small"
+                                                            class="slds-m-left_xx-small"></lightning-icon>
+                                        </template>
+                                    </h3>
+
+                                    <template if:true={module.lessons}>
+                                        <ul class="slds-has-dividers_top-space">
+                                            <template for:each={module.lessons} for:item="lesson">
+                                                <li key={lesson.lessonId} class="slds-item">
+                                                    <div 
+                                                        class={lesson.rowClass}
+                                                        data-lesson-id={lesson.lessonId}
+                                                        onclick={handleLessonSelect}>
+                                                        <div class="slds-grid slds-grid_vertical-align-center">
+                                                            <div class="slds-col slds-grow">
+                                                                <div class="slds-text-body_small">{lesson.lessonName}</div>
+                                                            </div>
+                                                            <div class="slds-col slds-no-flex slds-text-align_right">
+                                                                <template if:true={lesson.isCompleted}>
+                                                                    <lightning-icon icon-name="utility:check" 
+                                                                                    variant="success" 
+                                                                                    alternative-text="Completed"
+                                                                                    size="x-small"></lightning-icon>
+                                                                </template>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </template>
+                                        </ul>
+                                    </template>
+
+                                    <!-- Module Quiz Button -->
+                                    <template if:true={module.moduleQuizId}>
+                                        <div class="slds-m-top_small slds-m-left_small">
+                                            <lightning-button
+                                                label="Module Quiz"
+                                                variant="brand-outline"
+                                                icon-name="utility:questions_and_answers"
+                                                icon-position="left"
+                                                data-module-id={module.moduleId}
+                                                onclick={handleTakeModuleQuiz}>
+                                            </lightning-button>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+
+                            <!-- Course Quiz Button -->
+                            <template if:true={hasCourseQuiz}>
+                                <div class="slds-m-top_medium slds-p-top_medium slds-border_top">
+                                    <lightning-button
+                                        label="Course Final Quiz"
+                                        variant="brand"
+                                        icon-name="utility:education"
+                                        icon-position="left"
+                                        onclick={handleTakeCourseQuiz}>
+                                    </lightning-button>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT PANEL: Selected Lesson Details (2/3 width) -->
+                    <div class="slds-col slds-size_2-of-3">
+                        <template if:true={hasSelectedLesson}>
+                            <div class="slds-box">
+                                <!-- Lesson Header -->
+                                <div class="slds-m-bottom_medium">
+                                    <h2 class="slds-text-heading_medium">{selectedLesson.lessonName}</h2>
+                                    <div class="slds-m-top_x-small">
+                                        <lightning-badge label={selectedLesson.status}></lightning-badge>
+                                    </div>
+                                </div>
+
+                                <!-- Lesson Description -->
+                                <template if:true={selectedLesson.description}>
+                                    <div class="slds-text-body_regular slds-m-bottom_large">
+                                        {selectedLesson.description}
+                                    </div>
+                                </template>
+
+                                <!-- Action Buttons -->
+                                <div class="slds-m-top_large">
+                                    <div class="slds-grid slds-gutters slds-wrap">
+                                        
+                                        <!-- Start Lesson Button -->
+                                        <template if:true={canStartLesson}>
+                                            <div class="slds-col">
+                                                <lightning-button
+                                                    label="Start Lesson"
+                                                    variant="brand"
+                                                    icon-name="utility:forward"
+                                                    icon-position="left"
+                                                    onclick={handleStartLesson}>
+                                                </lightning-button>
+                                            </div>
+                                        </template>
+
+                                        <!-- Take Quiz Button -->
+                                        <template if:true={canTakeQuiz}>
+                                            <div class="slds-col">
+                                                <lightning-button
+                                                    label="Take Quiz"
+                                                    variant="brand"
+                                                    icon-name="utility:questions_and_answers"
+                                                    icon-position="left"
+                                                    onclick={handleTakeQuiz}>
+                                                </lightning-button>
+                                            </div>
+                                        </template>
+
+                                        <!-- Mark Complete Button -->
+                                        <template if:true={selectedLesson.showCompleteButton}>
+                                            <template if:false={selectedLesson.isCompleted}>
+                                                <div class="slds-col">
+                                                    <lightning-button
+                                                        label="Mark Complete"
+                                                        variant="neutral"
+                                                        icon-name="utility:check"
+                                                        onclick={handleMarkComplete}>
+                                                    </lightning-button>
+                                                </div>
+                                            </template>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Empty State: No Lesson Selected -->
+                        <template if:false={hasSelectedLesson}>
+                            <div class="slds-box slds-text-align_center slds-p-around_xx-large">
+                                <lightning-icon icon-name="utility:info" size="large" variant="default"></lightning-icon>
+                                <p class="slds-text-heading_small slds-m-top_medium">Select a lesson to view details</p>
+                            </div>
+                        </template>
+                    </div>
+
+                </div>
+            </div>
+        </template>
+
+        <template if:false={hasModules}>
+            <template if:false={isLoading}>
+                <template if:false={error}>
+                    <div class="slds-p-around_medium slds-text-align_center slds-text-color_weak">
+                        <p>No lesson context available.</p>
+                    </div>
+                </template>
+            </template>
+        </template>
+    </lightning-card>
+
+    <!-- Lesson Content Modal -->
+    <c-trailforge-lesson-modal
+        show-modal={showLessonModal}
+        lesson-id={selectedLessonId}
+        lesson-name={selectedLessonName}
+        contact-id={contactId}
+        enrollment-id={enrollmentId}
+        show-complete-button={showCompleteButton}
+        modal-size={modalSize}
+        onclose={handleLessonModalClose}
+        onlessoncomplete={handleLessonComplete}>
+    </c-trailforge-lesson-modal>
+
+    <!-- Quiz Modal -->
+    <c-trailforge-quiz-modal
+        show-modal={showQuizModal}
+        lesson-id={selectedLessonId}
+        quiz-context={quizContext}
+        contact-id={contactId}
+        enrollment-id={enrollmentId}
+        onclose={handleQuizModalClose}
+        onquizcomplete={handleQuizComplete}>
+    </c-trailforge-quiz-modal>
+
+</template>

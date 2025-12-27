@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Set_Progress_Unique_Key</fullName>
+        <description>Populates the Unique_Key__c field with Contact__c + '_' + Lesson__c + '_' + Enrollment__c to enforce duplicate prevention</description>
+        <field>Unique_Key__c</field>
+        <formula>Contact__c + &apos;_&apos; + Lesson__c + &apos;_&apos; + Enrollment__c</formula>
+        <name>Set Progress Unique Key</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Formula</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <rules>
+        <fullName>Populate_Progress_Unique_Key</fullName>
+        <actions>
+            <name>Set_Progress_Unique_Key</name>
+            <type>FieldUpdate</type>
+        </actions>
+        <active>true</active>
+        <description>Sets the Unique_Key__c field on create or update to prevent duplicate progress records</description>
+        <formula>ISBLANK(Unique_Key__c) || ISCHANGED(Contact__c) || ISCHANGED(Lesson__c) || ISCHANGED(Enrollment__c)</formula>
+        <triggerType>onAllChanges</triggerType>
+    </rules>
+</Workflow>

@@ -1,0 +1,68 @@
+/* Welcome Body Container */
+.welcome-body {
+    padding: 3rem 2rem;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Welcome Stats Grid */
+.welcome-stats {
+    display: flex;
+    gap: 3rem;
+    justify-content: center;
+    padding: 1.5rem;
+    background-color: var(--lwc-colorBackgroundAlt, #f3f3f3);
+    border-radius: 0.5rem;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--lwc-brandPrimary, #0176d3);
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--lwc-colorTextWeak, #706e6b);
+    margin-top: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .welcome-body {
+        padding: 2rem 1rem;
+    }
+    
+    .welcome-stats {
+        gap: 2rem;
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+    }
+}
+
+/* Custom Cow Logo Icon */
+.tf-custom-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.tf-cow-logo {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}

@@ -1,0 +1,106 @@
+.tf-slide-content {
+    min-height: 300px;
+}
+
+/* Ensure modal is on top */
+.slds-modal {
+    z-index: 9001;
+}
+
+.slds-backdrop {
+    z-index: 9000;
+}
+
+/* Modal size variants */
+.slds-modal_medium {
+    width: 50%;
+    max-width: 768px;
+    min-width: 480px;
+}
+
+.slds-modal_large {
+    width: 70%;
+    max-width: 1024px;
+    min-width: 640px;
+}
+
+.slds-modal_x-large {
+    width: 90%;
+    max-width: 1280px;
+    min-width: 800px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .slds-modal_medium,
+    .slds-modal_large,
+    .slds-modal_x-large {
+        width: 95%;
+        min-width: auto;
+    }
+}
+
+/* ========================================
+   External Content Styles (Video, URL, PDF)
+   ======================================== */
+
+/* Video container - 16:9 aspect ratio */
+.tf-video-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #000;
+}
+
+.tf-video-iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 8px;
+}
+
+/* URL/iframe container */
+.tf-iframe-container {
+    width: 100%;
+    min-height: 500px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #d8dde6;
+}
+
+.tf-url-iframe {
+    width: 100%;
+    height: 500px;
+    min-height: 500px;
+    border: none;
+}
+
+/* PDF container */
+.tf-pdf-container {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.tf-pdf-iframe {
+    width: 100%;
+    height: 600px;
+    min-height: 600px;
+    border: 1px solid #d8dde6;
+    border-radius: 8px;
+}
+
+/* Responsive adjustments for external content */
+@media (max-width: 768px) {
+    .tf-url-iframe,
+    .tf-pdf-iframe {
+        height: 400px;
+        min-height: 400px;
+    }
+}

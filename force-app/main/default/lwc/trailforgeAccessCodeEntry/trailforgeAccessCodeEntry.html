@@ -1,0 +1,94 @@
+<template>
+    <div class="access-code-container">
+        
+        <!-- Loading State -->
+        <template if:true={isLoading}>
+            <div class="slds-align_absolute-center slds-p-around_large">
+                <lightning-spinner alternative-text="Loading..." size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Error State -->
+        <template if:true={showError}>
+            <div class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_medium" role="alert">
+                <lightning-icon icon-name="utility:error" alternative-text="Error" variant="inverse" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                <span class="slds-text-heading_small">{errorMessage}</span>
+            </div>
+        </template>
+
+        <!-- Success/Welcome State -->
+        <template if:true={isAuthenticated}>
+            <div class="slds-box slds-theme_shade slds-text-align_center authenticated-box">
+                <lightning-icon icon-name="utility:success" variant="success" size="large" class="slds-m-bottom_medium"></lightning-icon>
+                <h2 class="slds-text-heading_medium slds-m-bottom_small">Welcome, {contactName}!</h2>
+                <p class="slds-text-body_regular slds-m-bottom_medium slds-text-color_weak">
+                    Full access enabled. Your session is active.
+                </p>
+                <div class="slds-m-top_medium">
+                    <lightning-button 
+                        label="Clear Session" 
+                        variant="neutral" 
+                        onclick={handleClearSession}
+                        class="slds-m-right_small">
+                    </lightning-button>
+                    <lightning-button 
+                        label="Continue to Learning" 
+                        variant="brand" 
+                        onclick={handleContinue}>
+                    </lightning-button>
+                </div>
+            </div>
+        </template>
+
+        <!-- Entry Form State -->
+        <template if:false={isAuthenticated}>
+            <template if:false={isLoading}>
+                <div class="slds-box entry-form-box">
+                    <div class="slds-text-align_center slds-m-bottom_medium">
+                        <lightning-icon icon-name="utility:lock" size="large" class="slds-m-bottom_small"></lightning-icon>
+                        <h2 class="slds-text-heading_medium">Enter Access Code</h2>
+                        <p class="slds-text-body_regular slds-text-color_weak slds-m-top_x-small">
+                            Enter your one-time access code to begin learning.
+                        </p>
+                    </div>
+
+                    <div class="slds-form-element slds-m-bottom_medium">
+                        <lightning-input
+                            type="text"
+                            label="Access Code"
+                            placeholder="TF-XXXX-XXXX"
+                            value={codeInput}
+                            onchange={handleCodeChange}
+                            onkeyup={handleKeyUp}
+                            class="code-input"
+                            autocomplete="off"
+                            maxlength="12">
+                        </lightning-input>
+                    </div>
+
+                    <div class="slds-text-align_center">
+                        <lightning-button 
+                            label="Submit" 
+                            variant="brand" 
+                            onclick={handleSubmit}
+                            disabled={isSubmitDisabled}
+                            class="slds-m-right_small">
+                        </lightning-button>
+                        <template if:true={showReadOnlyButton}>
+                            <lightning-button 
+                                label="Continue as Guest" 
+                                variant="neutral" 
+                                onclick={handleContinueReadOnly}>
+                            </lightning-button>
+                        </template>
+                    </div>
+
+                    <p class="slds-text-body_small slds-text-color_weak slds-text-align_center slds-m-top_medium">
+                        Don't have an access code? Contact your administrator.
+                    </p>
+                </div>
+            </template>
+        </template>
+
+    </div>
+</template>

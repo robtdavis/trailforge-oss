@@ -1,0 +1,300 @@
+<template>
+    <!-- Loading State -->
+    <template if:true={isLoading}>
+        <div class="slds-align_absolute-center slds-m-vertical_large">
+            <lightning-spinner alternative-text="Loading quiz..." size="medium"></lightning-spinner>
+        </div>
+    </template>
+    
+    <!-- Error State -->
+    <template if:true={error}>
+        <div class="slds-m-around_medium">
+            <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                <span class="slds-assistive-text">Error</span>
+                <h2 class="slds-text-heading_small">
+                    <lightning-icon icon-name="utility:error" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                    Error Loading Quiz
+                </h2>
+                <p class="slds-m-top_small">{errorMessage}</p>
+            </div>
+        </div>
+    </template>
+    
+    <!-- No Quiz State -->
+    <template if:false={hasQuiz}>
+        <template if:false={isLoading}>
+            <template if:false={error}>
+                <div class="slds-align_absolute-center slds-m-vertical_xx-large">
+                    <div class="slds-text-align_center">
+                        <lightning-icon icon-name="custom:custom63" size="large" class="slds-m-bottom_medium"></lightning-icon>
+                        <p class="slds-text-heading_small">No Quiz Available</p>
+                        <p class="slds-text-color_weak slds-m-top_small">This lesson does not have a quiz.</p>
+                    </div>
+                </div>
+            </template>
+        </template>
+    </template>
+    
+    <!-- Quiz Content -->
+    <template if:true={hasQuiz}>
+        <div class="slds-card">
+            
+            <!-- Quiz Header -->
+            <div class="slds-card__header slds-grid">
+                <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                    <div class="slds-media__figure">
+                        <lightning-icon icon-name="custom:custom63" size="small"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <h2 class="slds-card__header-title">
+                            <span class="slds-text-heading_medium">{quizContext.quizName}</span>
+                        </h2>
+                    </div>
+                </header>
+            </div>
+            
+            <!-- Quiz Metadata -->
+            <div class="slds-card__body slds-card__body_inner">
+                
+                <!-- Instructions -->
+                <template if:true={quizContext.instructions}>
+                    <div class="slds-box slds-m-bottom_medium">
+                        <h3 class="slds-text-heading_small slds-m-bottom_small">Instructions</h3>
+                        <p class="slds-text-body_regular">{quizContext.instructions}</p>
+                    </div>
+                </template>
+                
+                <!-- Quiz Info -->
+                <div class="slds-grid slds-wrap slds-gutters_small slds-m-bottom_medium">
+                    <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
+                        <div class="slds-box slds-box_x-small slds-text-align_center">
+                            <div class="slds-text-color_weak slds-text-body_small">Passing Score</div>
+                            <div class="slds-text-heading_small">{passingScoreFormatted}</div>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
+                        <div class="slds-box slds-box_x-small slds-text-align_center">
+                            <div class="slds-text-color_weak slds-text-body_small">Total Points</div>
+                            <div class="slds-text-heading_small">{maxScoreFormatted}</div>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
+                        <div class="slds-box slds-box_x-small slds-text-align_center">
+                            <div class="slds-text-color_weak slds-text-body_small">Questions</div>
+                            <div class="slds-text-heading_small">{quizContext.questions.length}</div>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
+                        <div class="slds-box slds-box_x-small slds-text-align_center">
+                            <div class="slds-text-color_weak slds-text-body_small">Attempts</div>
+                            <div class="slds-text-heading_small">{attemptCountDisplay}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Previous Attempt Results -->
+                <template if:true={hasPreviousAttempts}>
+                    <div class="slds-box slds-m-bottom_medium">
+                        <h3 class="slds-text-heading_small slds-m-bottom_small">Previous Attempt</h3>
+                        <div class="slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-col">
+                                <template if:true={latestAttemptPassed}>
+                                    <lightning-icon icon-name="utility:success" size="small" 
+                                                    variant="success" class="slds-m-right_x-small">
+                                    </lightning-icon>
+                                    <span class="slds-text-color_success slds-text-body_regular">
+                                        Passed - {latestAttemptScoreDisplay}
+                                    </span>
+                                </template>
+                                <template if:false={latestAttemptPassed}>
+                                    <lightning-icon icon-name="utility:error" size="small" 
+                                                    variant="error" class="slds-m-right_x-small">
+                                    </lightning-icon>
+                                    <span class="slds-text-color_error slds-text-body_regular">
+                                        Not Passed - {latestAttemptScoreDisplay}
+                                    </span>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                
+                <!-- Slice 6.2: Results Display -->
+                <template if:true={showResults}>
+                    <div class="slds-box slds-m-bottom_medium slds-theme_shade">
+                        <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_small">
+                            <template if:true={latestGradingResult.passed}>
+                                <lightning-icon icon-name="utility:success" size="medium" 
+                                                variant="success" class="slds-m-right_small">
+                                </lightning-icon>
+                                <h3 class="slds-text-heading_medium slds-text-color_success">
+                                    Quiz Passed!
+                                </h3>
+                            </template>
+                            <template if:false={latestGradingResult.passed}>
+                                <lightning-icon icon-name="utility:warning" size="medium" 
+                                                variant="warning" class="slds-m-right_small">
+                                </lightning-icon>
+                                <h3 class="slds-text-heading_medium slds-text-color_warning">
+                                    Quiz Not Passed
+                                </h3>
+                            </template>
+                        </div>
+                        
+                        <div class="slds-text-body_regular slds-m-bottom_small">
+                            <strong>Your Score:</strong> {resultsScoreDisplay}
+                        </div>
+                        
+                        <div class="slds-text-body_regular slds-m-bottom_small">
+                            <strong>Attempt:</strong> {latestGradingResult.attemptNumber} of {quizContext.maxAttempts}
+                        </div>
+                        
+                        <template if:true={latestGradingResult.message}>
+                            <div class="slds-text-body_regular slds-m-bottom_small">
+                                {latestGradingResult.message}
+                            </div>
+                        </template>
+                        
+                        <!-- Retake Button -->
+                        <template if:true={canRetake}>
+                            <div class="slds-m-top_medium">
+                                <lightning-button 
+                                    label="Retake Quiz" 
+                                    onclick={handleRetakeQuiz}
+                                    variant="brand">
+                                </lightning-button>
+                            </div>
+                        </template>
+                        
+                        <template if:false={canRetake}>
+                            <div class="slds-text-color_weak slds-m-top_small">
+                                <template if:false={quizContext.allowRetakes}>
+                                    Retakes are not allowed for this quiz.
+                                </template>
+                                <template if:true={quizContext.allowRetakes}>
+                                    Maximum attempts reached.
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+                
+                <!-- Slice 6.2: Validation Error -->
+                <template if:true={validationError}>
+                    <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-bottom_medium" role="alert">
+                        <span class="slds-assistive-text">Warning</span>
+                        <h2>
+                            <lightning-icon icon-name="utility:warning" size="x-small" 
+                                            variant="warning" class="slds-m-right_x-small">
+                            </lightning-icon>
+                            {validationError}
+                        </h2>
+                    </div>
+                </template>
+                
+                <!-- Slice 6.2: Progress Indicator -->
+                <template if:false={showResults}>
+                    <div class="slds-box slds-box_x-small slds-text-align_center slds-m-bottom_medium">
+                        <p class="slds-text-body_small slds-text-color_weak">{progressDisplay}</p>
+                    </div>
+                </template>
+                
+                <!-- Questions -->
+                <template if:true={hasQuestions}>
+                    <div class="slds-m-top_large">
+                        <h3 class="slds-text-heading_small slds-m-bottom_medium">Questions</h3>
+                        
+                        <template for:each={quizContext.questions} for:item="question" for:index="questionIndex">
+                            <div key={question.questionId} class="slds-box slds-m-bottom_medium">
+                                
+                                <!-- Question Header -->
+                                <div class="slds-grid slds-grid_vertical-align-start slds-m-bottom_small">
+                                    <div class="slds-col slds-size_1-of-12">
+                                        <span class="slds-badge">{questionIndex}</span>
+                                    </div>
+                                    <div class="slds-col slds-size_10-of-12">
+                                        <h4 class="slds-text-heading_small">{question.questionText}</h4>
+                                        <template if:true={question.required}>
+                                            <span class="slds-text-color_error slds-text-body_small">*Required</span>
+                                        </template>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-12 slds-text-align_right">
+                                        <span class="slds-text-body_small slds-text-color_weak">
+                                            {question.points} pts
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Slice 6.2: Interactive Answer Options -->
+                                <div class="slds-m-left_large">
+                                    <template for:each={question.options} for:item="option">
+                                        <div key={option.optionId} class="slds-form-element slds-m-bottom_x-small">
+                                            <div class="slds-form-element__control">
+                                                <span class="slds-radio">
+                                                    <input 
+                                                        type="radio" 
+                                                        id={option.optionId} 
+                                                        name={question.questionId}
+                                                        value={option.optionId}
+                                                        data-question-id={question.questionId}
+                                                        onchange={handleAnswerSelection}
+                                                        disabled={showResults}
+                                                    />
+                                                    <label class="slds-radio__label" for={option.optionId}>
+                                                        <span class="slds-radio_faux"></span>
+                                                        <span class="slds-form-element__label">{option.answerText}</span>
+                                                    </label>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                                
+                            </div>
+                        </template>
+                    </div>
+                </template>
+                
+                <!-- No Questions State -->
+                <template if:false={hasQuestions}>
+                    <div class="slds-align_absolute-center slds-m-vertical_large">
+                        <div class="slds-text-align_center">
+                            <lightning-icon icon-name="utility:warning" size="medium" 
+                                            variant="warning" class="slds-m-bottom_small">
+                            </lightning-icon>
+                            <p class="slds-text-heading_small">No Questions Available</p>
+                            <p class="slds-text-color_weak slds-m-top_small">This quiz has not been configured yet.</p>
+                        </div>
+                    </div>
+                </template>
+                
+            </div>
+            
+            <!-- Slice 6.2: Quiz Footer with Submit Button -->
+            <div class="slds-card__footer">
+                <template if:false={showResults}>
+                    <div class="slds-text-align_center">
+                        <lightning-button 
+                            label="Submit Quiz" 
+                            onclick={handleSubmitQuiz}
+                            variant="brand"
+                            disabled={isSubmitting}
+                            class="slds-m-right_small">
+                        </lightning-button>
+                        
+                        <template if:true={isSubmitting}>
+                            <lightning-spinner alternative-text="Submitting quiz..." size="small"></lightning-spinner>
+                        </template>
+                    </div>
+                </template>
+                
+                <template if:true={showResults}>
+                    <div class="slds-text-align_center slds-text-color_weak">
+                        <p>Quiz submitted successfully.</p>
+                    </div>
+                </template>
+            </div>
+            
+        </div>
+    </template>
+</template>

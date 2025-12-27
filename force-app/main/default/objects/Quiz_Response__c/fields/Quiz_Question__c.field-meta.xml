@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Quiz_Question__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>The question being answered</description>
+    <label>Quiz Question</label>
+    <referenceTo>Quiz_Question__c</referenceTo>
+    <relationshipLabel>Responses</relationshipLabel>
+    <relationshipName>Responses</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

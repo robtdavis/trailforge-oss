@@ -1,0 +1,190 @@
+<template>
+    <!-- Modal Backdrop -->
+    <section if:true={showModal} class="slds-modal slds-fade-in-open" role="dialog">
+        <div class={modalContainerClass}>
+            
+            <!-- Modal Header -->
+            <header class="slds-modal__header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" 
+                        title="Close" 
+                        onclick={handleClose}>
+                    <lightning-icon icon-name="utility:close" alternative-text="Close" size="small"></lightning-icon>
+                    <span class="slds-assistive-text">Close</span>
+                </button>
+                <h2 class="slds-modal__title slds-hyphenate">{lessonName}</h2>
+                <p class="slds-m-top_x-small">
+                    Slide {currentSlideNumber} of {totalSlides}
+                </p>
+            </header>
+
+            <!-- Modal Body - Slide Content -->
+            <div class="slds-modal__content slds-p-around_medium" style="min-height: 400px;">
+                
+                <!-- Loading State -->
+                <template if:true={isLoading}>
+                    <div style="min-height: 400px; display: flex; align-items: center; justify-content: center;">
+                        <lightning-spinner alternative-text="Loading content" size="large"></lightning-spinner>
+                    </div>
+                </template>
+
+                <!-- Error State -->
+                <template if:true={error}>
+                    <div class="slds-text-color_error slds-text-align_center slds-p-around_large">
+                        <lightning-icon icon-name="utility:error" size="medium" variant="error"></lightning-icon>
+                        <p class="slds-m-top_small">{error}</p>
+                    </div>
+                </template>
+
+                <!-- Slide Content -->
+                <template if:false={isLoading}>
+                    <template if:false={error}>
+                        <template if:true={hasSlides}>
+                            
+                            <!-- Current Slide -->
+                            <div class="tf-slide-content">
+                                
+                                <!-- Slide Title (only for non-external content) -->
+                                <template if:false={isExternalContent}>
+                                    <template if:true={currentSlide.title}>
+                                        <h3 class="slds-text-heading_medium slds-m-bottom_medium">
+                                            {currentSlide.title}
+                                        </h3>
+                                    </template>
+                                </template>
+
+                                <!-- External Video Content (YouTube, Vimeo, etc.) -->
+                                <template if:true={isVideoContent}>
+                                    <div class="tf-video-container">
+                                        <iframe 
+                                            src={videoEmbedUrl}
+                                            title={lessonName}
+                                            frameborder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                            allowfullscreen
+                                            class="tf-video-iframe">
+                                        </iframe>
+                                    </div>
+                                </template>
+
+                                <!-- External URL Content (iFrame) -->
+                                <template if:true={isUrlContent}>
+                                    <div class="tf-iframe-container">
+                                        <iframe 
+                                            src={externalUrl}
+                                            title={lessonName}
+                                            frameborder="0"
+                                            class="tf-url-iframe">
+                                        </iframe>
+                                    </div>
+                                </template>
+
+                                <!-- PDF Content -->
+                                <template if:true={isPdfContent}>
+                                    <div class="tf-pdf-container">
+                                        <iframe 
+                                            src={externalUrl}
+                                            title={lessonName}
+                                            frameborder="0"
+                                            class="tf-pdf-iframe">
+                                        </iframe>
+                                        <div class="slds-text-align_center slds-m-top_small">
+                                            <a href={externalUrl} target="_blank" rel="noopener noreferrer" class="slds-text-link">
+                                                <lightning-icon icon-name="utility:download" size="x-small" class="slds-m-right_xx-small"></lightning-icon>
+                                                Open PDF in new tab
+                                            </a>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <!-- Slide Image -->
+                                <template if:false={isExternalContent}>
+                                    <template if:true={currentSlide.imageUrl}>
+                                        <div class="slds-m-bottom_medium slds-text-align_center">
+                                            <img src={currentSlide.imageUrl} 
+                                                 alt={currentSlide.imageAlt} 
+                                                 style="max-width: 100%; max-height: 400px; border-radius: 4px;" />
+                                        </div>
+                                    </template>
+                                </template>
+
+                                <!-- Slide Body Content (HTML) -->
+                                <template if:false={isExternalContent}>
+                                    <template if:true={currentSlide.isHtml}>
+                                        <div class="slide-body-content" lwc:dom="manual"></div>
+                                    </template>
+
+                                    <template if:false={currentSlide.isHtml}>
+                                        <div class="slds-text-longform" style="white-space: pre-wrap;">
+                                            {currentSlide.body}
+                                        </div>
+                                    </template>
+                                </template>
+
+                            </div>
+
+                        </template>
+                    </template>
+                </template>
+
+            </div>
+
+            <!-- Modal Footer - Navigation -->
+            <footer class="slds-modal__footer" if:true={hasSlides}>
+                <div class="slds-grid slds-grid_align-spread">
+                    
+                    <!-- Previous Button -->
+                    <div>
+                        <button class="slds-button slds-button_neutral" 
+                                onclick={handlePrevious}
+                                disabled={isFirstSlide}>
+                            <lightning-icon icon-name="utility:chevronleft" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                            Previous
+                        </button>
+                    </div>
+
+                    <!-- Next / Complete / Close Button -->
+                    <div>
+                        <template if:false={isLastSlide}>
+                            <button class="slds-button slds-button_brand" 
+                                    onclick={handleNext}>
+                                Next
+                                <lightning-icon icon-name="utility:chevronright" size="x-small" class="slds-m-left_x-small"></lightning-icon>
+                            </button>
+                        </template>
+
+                        <!-- Show Complete button only if showCompleteButton is true -->
+                        <template if:true={showCompleteButtonOnLastSlide}>
+                            <button class="slds-button slds-button_success" 
+                                    onclick={handleComplete}
+                                    disabled={isCompleting}>
+                                <template if:true={isCompleting}>
+                                    <lightning-spinner alternative-text="Completing..." size="small" class="slds-m-right_x-small"></lightning-spinner>
+                                    Completing...
+                                </template>
+                                <template if:false={isCompleting}>
+                                    <lightning-icon icon-name="utility:check" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                    Complete Lesson
+                                </template>
+                            </button>
+                        </template>
+
+                        <!-- Show Close button on last slide if Complete is hidden -->
+                        <template if:true={showCloseButtonOnLastSlide}>
+                            <button class="slds-button slds-button_neutral" 
+                                    onclick={handleCloseAndComplete}>
+                                Close
+                                <lightning-icon icon-name="utility:close" size="x-small" class="slds-m-left_x-small"></lightning-icon>
+                            </button>
+                        </template>
+                    </div>
+
+                </div>
+            </footer>
+
+        </div>
+    </section>
+
+    <!-- Modal Backdrop Overlay -->
+    <div if:true={showModal} class="slds-backdrop slds-backdrop_open"></div>
+
+</template>

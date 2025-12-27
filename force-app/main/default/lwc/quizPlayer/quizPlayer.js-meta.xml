@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Quiz Player</masterLabel>
+    <description>Learner-facing quiz player for taking quizzes</description>
+    <targets>
+        <target>lightning__RecordPage</target>
+        <target>lightning__AppPage</target>
+        <target>lightningCommunity__Page</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__RecordPage">
+            <objects>
+                <object>Lesson__c</object>
+            </objects>
+        </targetConfig>
+        <targetConfig targets="lightning__AppPage">
+            <property name="lessonId" type="String" label="Lesson ID" description="ID of the lesson" required="true"/>
+            <property name="contactId" type="String" label="Contact ID" description="ID of the learner" required="true"/>
+            <property name="enrollmentId" type="String" label="Enrollment ID" description="ID of the enrollment" required="false"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

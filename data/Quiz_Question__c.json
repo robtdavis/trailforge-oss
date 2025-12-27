@@ -1,0 +1,144 @@
+{
+    "records": [
+        {
+            "attributes": {
+                "type": "Quiz_Question__c",
+                "referenceId": "Quiz_Question__cRef1"
+            },
+            "Name": "QQ-00012",
+            "Quiz__c": "@Quiz__cRef1",
+            "Question_Text__c": "What is the best next step if you want to continue learning about responsible AI use?",
+            "Question_Type__c": "MultipleChoice",
+            "Points__c": 1,
+            "Required__c": true,
+            "Sort_Order__c": 10,
+            "Explanation__c": "<p>Correct Answer:  Use trusted frameworks and security resources</p><p><br></p><p>Explanation: The course points learners to authoritative resources like NIST, CISA, OECD, and vendor safety guidance.</p>"
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Question__c",
+                "referenceId": "Quiz_Question__cRef2"
+            },
+            "Name": "QQ-00004",
+            "Quiz__c": "@Quiz__cRef1",
+            "Question_Text__c": "Which of the following is appropriate to paste into an AI tool during live work?",
+            "Question_Type__c": "MultipleChoice",
+            "Points__c": 1,
+            "Required__c": true,
+            "Sort_Order__c": 2,
+            "Explanation__c": "<p>Correct Answer: A sanitized scenario using placeholders</p><p><br></p><p>Explanation: Live work should use abstraction and placeholders, never real identifiers or secrets.</p>"
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Question__c",
+                "referenceId": "Quiz_Question__cRef3"
+            },
+            "Name": "QQ-00006",
+            "Quiz__c": "@Quiz__cRef1",
+            "Question_Text__c": "Which situation should prompt you to pause and escalate before using AI?",
+            "Question_Type__c": "MultipleChoice",
+            "Points__c": 1,
+            "Required__c": true,
+            "Sort_Order__c": 4,
+            "Explanation__c": "<p>Correct Answer: Handling a customer issue involving legal action</p><p><br></p><p>Explanation: Legal, HR, compliance, or high-impact customer situations require escalation and human review.</p>"
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Question__c",
+                "referenceId": "Quiz_Question__cRef4"
+            },
+            "Name": "QQ-00007",
+            "Quiz__c": "@Quiz__cRef1",
+            "Question_Text__c": "What is the main risk of pasting real identifiers (like order numbers) into AI tools during live work?",
+            "Question_Type__c": "MultipleChoice",
+            "Points__c": 2,
+            "Required__c": true,
+            "Sort_Order__c": 5,
+            "Explanation__c": "<p>Correct Answer: Potential data exposure and compliance issues</p><p><br></p><p>Explanation: Real identifiers can expose sensitive data and create legal or regulatory risk.</p><p><br></p>"
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Question__c",
+                "referenceId": "Quiz_Question__cRef5"
+            },
+            "Name": "QQ-00011",
+            "Quiz__c": "@Quiz__cRef1",
+            "Question_Text__c": "Which behavior demonstrates good AI judgment?",
+            "Question_Type__c": "MultipleChoice",
+            "Points__c": 1,
+            "Required__c": true,
+            "Sort_Order__c": 9,
+            "Explanation__c": "<p>Correct Answer: Asking for guidance when unsure about data sensitivity</p><p><br></p><p>Explanation: Pausing and asking is framed as responsible behavior, not failure.</p>"
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Question__c",
+                "referenceId": "Quiz_Question__cRef6"
+            },
+            "Name": "QQ-00005",
+            "Quiz__c": "@Quiz__cRef1",
+            "Question_Text__c": "Why is it acceptable to include fictional order numbers in training materials?",
+            "Question_Type__c": "MultipleChoice",
+            "Points__c": 2,
+            "Required__c": true,
+            "Sort_Order__c": 3,
+            "Explanation__c": "<p>Correct Answer: Because fictional data cannot be tied to real customers</p><p><br></p><p>Explanation: Training examples may use clearly labeled, fictional data that cannot identify real people or transactions.</p>"
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Question__c",
+                "referenceId": "Quiz_Question__cRef7"
+            },
+            "Name": "QQ-00003",
+            "Quiz__c": "@Quiz__cRef1",
+            "Question_Text__c": "What is the primary role of AI in the workplace according to this training?",
+            "Question_Type__c": "MultipleChoice",
+            "Points__c": 1,
+            "Required__c": true,
+            "Sort_Order__c": 1,
+            "Explanation__c": "<p>Correct Answer:  To assist with drafting, summarizing, and analysis while humans remain accountable</p><p>Explanation: The training emphasizes AI as a tool, not a replacement for human responsibility.</p>"
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Question__c",
+                "referenceId": "Quiz_Question__cRef8"
+            },
+            "Name": "QQ-00008",
+            "Quiz__c": "@Quiz__cRef1",
+            "Question_Text__c": "Which statement best describes “human-in-the-loop”?",
+            "Question_Type__c": "MultipleChoice",
+            "Points__c": 2,
+            "Required__c": true,
+            "Sort_Order__c": 6,
+            "Explanation__c": "<p>Correct Answer: Humans remain responsible for reviewing and approving AI output</p><p><br></p><p>Explanation: Humans are always accountable for decisions, communication, and outcomes.</p><p><br></p>"
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Question__c",
+                "referenceId": "Quiz_Question__cRef9"
+            },
+            "Name": "QQ-00009",
+            "Quiz__c": "@Quiz__cRef1",
+            "Question_Text__c": "Which is an example of a safe AI prompt for live work?",
+            "Question_Type__c": "MultipleChoice",
+            "Points__c": 1,
+            "Required__c": true,
+            "Sort_Order__c": 7,
+            "Explanation__c": "<p>Correct Answer: “Draft a professional email about a delayed shipment using placeholders.”</p><p><br></p><p>Explanation: Safe prompts abstract details and avoid real identifiers or sensitive information.</p>"
+        },
+        {
+            "attributes": {
+                "type": "Quiz_Question__c",
+                "referenceId": "Quiz_Question__cRef10"
+            },
+            "Name": "QQ-00010",
+            "Quiz__c": "@Quiz__cRef1",
+            "Question_Text__c": "According to the training, why do most AI mistakes happen at work?",
+            "Question_Type__c": "MultipleChoice",
+            "Points__c": 1,
+            "Required__c": true,
+            "Sort_Order__c": 8,
+            "Explanation__c": "<p>Correct Answer: People rush and skip basic checks</p><p><br></p><p>Explanation: The course emphasizes habit-based mistakes—rushing, assumptions, and skipping review.</p>"
+        }
+    ]
+}

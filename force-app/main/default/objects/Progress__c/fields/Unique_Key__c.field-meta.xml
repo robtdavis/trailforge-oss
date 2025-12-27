@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Unique_Key__c</fullName>
+    <caseSensitive>false</caseSensitive>
+    <description>Unique constraint key to prevent duplicate progress records for the same Contact + Lesson + Enrollment combination. Workflow rule sets value to Contact__c + &apos;_&apos; + Lesson__c + &apos;_&apos; + Enrollment__c</description>
+    <externalId>true</externalId>
+    <label>Unique Key</label>
+    <length>255</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>true</unique>
+</CustomField>

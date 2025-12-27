@@ -1,0 +1,147 @@
+<template>
+    <lightning-card title={cardTitle} icon-name="custom:custom24">
+        
+        <!-- No Lesson ID provided -->
+        <template if:false={hasLessonId}>
+            <div class="slds-p-around_medium slds-text-align_center">
+                <lightning-icon icon-name="utility:warning" variant="warning" size="large"></lightning-icon>
+                <p class="slds-m-top_small slds-text-color_weak">
+                    No lesson selected. Please provide a lesson ID.
+                </p>
+            </div>
+        </template>
+        
+        <template if:true={hasLessonId}>
+            <!-- Loading Spinner -->
+            <template if:true={isLoading}>
+                <div class="slds-p-around_large slds-text-align_center">
+                    <lightning-spinner alternative-text="Loading..." size="medium"></lightning-spinner>
+                </div>
+            </template>
+            
+            <!-- Error Message -->
+            <template if:true={error}>
+                <div class="slds-p-around_medium">
+                    <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                        <span class="slds-assistive-text">Error</span>
+                        <h2>{error}</h2>
+                    </div>
+                </div>
+            </template>
+            
+            <!-- Editor Form -->
+            <template if:false={isLoading}>
+                <div class="slds-p-around_medium">
+                    
+                    <!-- Content Type Selection -->
+                    <div class="slds-m-bottom_medium">
+                        <lightning-combobox
+                            name="contentType"
+                            label="Content Type"
+                            value={contentType}
+                            placeholder="Select content type..."
+                            options={contentTypeOptions}
+                            onchange={handleContentTypeChange}
+                            required>
+                        </lightning-combobox>
+                    </div>
+                    
+                    <!-- Content Body (for Markdown/HTML) -->
+                    <template if:true={showContentBody}>
+                        <div class="slds-m-bottom_medium">
+                            <lightning-textarea
+                                name="contentBody"
+                                label={contentBodyLabel}
+                                value={contentBody}
+                                placeholder={contentBodyPlaceholder}
+                                onchange={handleContentBodyChange}
+                                max-length="32768"
+                                class="content-textarea">
+                            </lightning-textarea>
+                            <p class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">
+                                <template if:true={contentType}>
+                                    <template if:true={showContentBody}>
+                                        {contentBody.length} / 32,768 characters
+                                    </template>
+                                </template>
+                            </p>
+                        </div>
+                    </template>
+                    
+                    <!-- External URL (for URL/Video/PDF) -->
+                    <template if:true={showExternalUrl}>
+                        <div class="slds-m-bottom_medium">
+                            <lightning-input
+                                type="url"
+                                name="externalUrl"
+                                label={externalUrlLabel}
+                                value={externalUrl}
+                                placeholder={externalUrlPlaceholder}
+                                onchange={handleExternalUrlChange}>
+                            </lightning-input>
+                        </div>
+                    </template>
+                    
+                    <!-- Help text based on content type -->
+                    <template if:true={contentType}>
+                        <div class="slds-box slds-box_x-small slds-theme_shade slds-m-bottom_medium">
+                            <template if:true={showContentBody}>
+                                <template if:true={isMarkdownType}>
+                                    <p class="slds-text-body_small">
+                                        <lightning-icon icon-name="utility:info" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                                        <strong>Markdown Tips:</strong> Use # for headings, **bold**, *italic*, - for lists, [link text](url) for links.
+                                    </p>
+                                </template>
+                                <template if:true={isHtmlType}>
+                                    <p class="slds-text-body_small">
+                                        <lightning-icon icon-name="utility:info" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                                        <strong>HTML Tips:</strong> Use standard HTML tags. Scripts will be stripped for security.
+                                    </p>
+                                </template>
+                            </template>
+                            <template if:true={showExternalUrl}>
+                                <template if:true={isVideoType}>
+                                    <p class="slds-text-body_small">
+                                        <lightning-icon icon-name="utility:info" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                                        <strong>Video:</strong> Supports YouTube, Vimeo, and direct video URLs.
+                                    </p>
+                                </template>
+                                <template if:true={isPdfType}>
+                                    <p class="slds-text-body_small">
+                                        <lightning-icon icon-name="utility:info" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                                        <strong>PDF:</strong> Enter the direct URL to the PDF file.
+                                    </p>
+                                </template>
+                                <template if:true={isUrlType}>
+                                    <p class="slds-text-body_small">
+                                        <lightning-icon icon-name="utility:info" size="xx-small" class="slds-m-right_xx-small"></lightning-icon>
+                                        <strong>URL:</strong> Enter the URL to the external content.
+                                    </p>
+                                </template>
+                            </template>
+                        </div>
+                    </template>
+                    
+                </div>
+                
+                <!-- Action Buttons -->
+                <div slot="footer" class="slds-p-around_medium slds-border_top">
+                    <div class="slds-grid slds-grid_align-end">
+                        <lightning-button
+                            label="Cancel"
+                            onclick={handleCancel}
+                            class="slds-m-right_small">
+                        </lightning-button>
+                        <lightning-button
+                            label="Save Content"
+                            variant="brand"
+                            onclick={handleSave}
+                            disabled={isSaving}>
+                        </lightning-button>
+                    </div>
+                </div>
+            </template>
+        </template>
+        
+    </lightning-card>
+</template>

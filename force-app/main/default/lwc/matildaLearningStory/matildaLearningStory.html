@@ -1,0 +1,118 @@
+<template>
+    <article class="matilda-card">
+        <header class="matilda-header">
+            <img src={cowLogoUrl} alt="Matilda the cow - TrailForge mascot" class="matilda-logo">
+            <div class="matilda-header-text">
+                <h1 class="matilda-headline">Meet Matilda</h1>
+                <p class="matilda-tagline">The official cow of practical learning.</p>
+            </div>
+        </header>
+
+        <lightning-tabset variant="scoped">
+            <!-- Tab 1: Matilda's Story -->
+            <lightning-tab label="Matilda's Story" icon-name="custom:custom28">
+                <div class="matilda-content">
+                    <h2 class="matilda-manifesto-title">Matilda's Learning Manifesto</h2>
+                    <p class="matilda-subtitle">(Abridged &amp; Slightly Judgy)</p>
+
+                    <p class="matilda-paragraph">
+                        <strong>This is Matilda.</strong><br>
+                        She loves learning. She does not love "training" — you know, the kind with 87 slides, 
+                        three buzzwords per minute, and absolutely no clue how to do the actual thing.
+                    </p>
+
+                    <p class="matilda-paragraph">
+                        So Matilda staged a quiet rebellion and helped build <strong>TrailForge</strong> — where learning is:
+                    </p>
+
+                    <ul class="matilda-list">
+                        <li><strong>Short.</strong> (Coffee stays warm.)</li>
+                        <li><strong>Useful.</strong> (You can do stuff after.)</li>
+                        <li><strong>Fluff-free.</strong> (We respect your brain cells.)</li>
+                    </ul>
+
+                    <p class="matilda-paragraph">
+                        If you're typing in an access code, congrats — you've joined her movement: 
+                        <em>real skills, zero nonsense.</em>
+                    </p>
+
+                    <p class="matilda-paragraph">
+                        Matilda will be nearby, calm, supportive, and silently judging any course that wastes your time.
+                    </p>
+
+                    <p class="matilda-closing">
+                        Welcome to learning that actually works. 🐄
+                    </p>
+                </div>
+            </lightning-tab>
+
+            <!-- Tab 2: Quick Answers / FAQ -->
+            <lightning-tab label="Quick Answers" icon-name="standard:question_feed">
+                <div class="matilda-content faq-content">
+                    
+                    <div class="faq-item">
+                        <h3 class="faq-question">🔑 Where do I get an access code?</h3>
+                        <p class="faq-answer">
+                            Access codes are provided by your organization's training administrator. 
+                            If you're part of a company using TrailForge, check with your manager or HR team. 
+                            Each code is single-use and links you to the right courses.
+                        </p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3 class="faq-question">👀 Can I browse without an access code?</h3>
+                        <p class="faq-answer">
+                            Yes! Click <strong>"Continue as Guest"</strong> on the login page to explore available courses 
+                            in read-only mode. You won't be able to track progress or complete quizzes, but you can 
+                            see what's available. Think of it as window shopping for knowledge.
+                        </p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3 class="faq-question">📚 What types of content are available?</h3>
+                        <p class="faq-answer">
+                            TrailForge supports multiple content formats to keep things interesting:
+                        </p>
+                        <ul class="matilda-list">
+                            <li><strong>Rich HTML</strong> — Full-featured lessons with images, videos, and formatting</li>
+                            <li><strong>Markdown</strong> — Clean, readable content for technical documentation</li>
+                            <li><strong>Quizzes</strong> — Test your knowledge with multiple-choice questions</li>
+                            <li><strong>Multi-slide lessons</strong> — Step through content at your own pace</li>
+                        </ul>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3 class="faq-question">💻 Want to see how it's built?</h3>
+                        <p class="faq-answer">
+                            TrailForge is open source! Check out the repository to explore the code, 
+                            contribute, or spin up your own instance:
+                        </p>
+                        <p class="faq-repo-link">
+                            <strong>GitHub:</strong> <em>[Repository link coming soon]</em>
+                        </p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3 class="faq-question">🎯 How does progress tracking work?</h3>
+                        <p class="faq-answer">
+                            When you're logged in with an access code, TrailForge automatically tracks your progress. 
+                            Complete lessons, pass quizzes, and watch your course progress bar fill up. 
+                            Your progress syncs across devices — start on your laptop, finish on your phone.
+                        </p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3 class="faq-question">🐄 Who is Matilda, really?</h3>
+                        <p class="faq-answer">
+                            Matilda is a cow who believes learning should be practical, not painful. 
+                            She's not a real cow (obviously), but she represents our philosophy: 
+                            respect people's time, teach real skills, skip the corporate fluff. 
+                            She may or may not judge courses that include the phrase "synergy."
+                        </p>
+                    </div>
+
+                </div>
+            </lightning-tab>
+        </lightning-tabset>
+    </article>
+</template>

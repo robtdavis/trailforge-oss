@@ -1,0 +1,38 @@
+[
+    {
+        "sobject": "Course__c",
+        "saveRefs": true,
+        "resolveRefs": false,
+        "files": ["Course__c.json"]
+    },
+    {
+        "sobject": "Module__c",
+        "saveRefs": true,
+        "resolveRefs": true,
+        "files": ["Module__c.json"]
+    },
+    {
+        "sobject": "Quiz__c",
+        "saveRefs": true,
+        "resolveRefs": true,
+        "files": ["Quiz__c.json"]
+    },
+    {
+        "sobject": "Lesson__c",
+        "saveRefs": true,
+        "resolveRefs": true,
+        "files": ["Lesson__c.json"]
+    },
+    {
+        "sobject": "Quiz_Question__c",
+        "saveRefs": true,
+        "resolveRefs": true,
+        "files": ["Quiz_Question__c.json"]
+    },
+    {
+        "sobject": "Quiz_Answer_Option__c",
+        "saveRefs": false,
+        "resolveRefs": true,
+        "files": ["Quiz_Answer_Option__c.json"]
+    }
+]

@@ -1,0 +1,66 @@
+<template>
+    <div class="slds-p-around_medium">
+        <!-- Search Input -->
+        <div class="slds-m-bottom_medium">
+            <lightning-input
+                label="Search for Learner"
+                placeholder="Enter name or email..."
+                value={searchTerm}
+                onchange={handleSearchChange}>
+            </lightning-input>
+        </div>
+
+        <!-- Learner Options -->
+        <template if:true={hasLearnerOptions}>
+            <div class="learner-list slds-m-bottom_medium">
+                <template for:each={learnerOptions} for:item="option">
+                    <div key={option.value} 
+                         class="learner-option slds-p-around_small"
+                         data-contact-id={option.value}
+                         onclick={handleLearnerSelect}>
+                        <div class="slds-text-body_regular slds-text-color_default">
+                            {option.label}
+                        </div>
+                        <template if:true={option.description}>
+                            <div class="slds-text-body_small slds-text-color_weak">
+                                {option.description}
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <!-- Selected Learner Display -->
+        <template if:true={selectedContactId}>
+            <div class="slds-box slds-m-bottom_medium">
+                <div class="slds-text-heading_small slds-m-bottom_x-small">
+                    Selected Learner
+                </div>
+                <div class="slds-text-body_regular">
+                    {selectedLearnerName}
+                </div>
+            </div>
+        </template>
+
+        <!-- Confirm Button -->
+        <template if:true={selectedContactId}>
+            <lightning-button
+                label="Continue"
+                variant="brand"
+                class="slds-button_stretch"
+                onclick={handleLaunchTrailForge}>
+            </lightning-button>
+        </template>
+
+        <!-- Error Display -->
+        <template if:true={error}>
+            <div class="slds-text-color_error slds-m-top_medium">
+                <lightning-icon icon-name="utility:error" 
+                                size="small" 
+                                class="slds-m-right_x-small"></lightning-icon>
+                {error}
+            </div>
+        </template>
+    </div>
+</template>

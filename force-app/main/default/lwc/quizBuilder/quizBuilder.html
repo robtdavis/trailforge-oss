@@ -1,0 +1,142 @@
+<template>
+    <lightning-card title={cardTitle} icon-name="standard:quiz">
+        <div class="slds-grid">
+            <!-- Left Panel: Quiz List -->
+            <div class="slds-col slds-size_1-of-3 slds-p-around_small quiz-list-panel">
+                <div class="slds-clearfix slds-m-bottom_small">
+                    <lightning-button
+                        label="New Quiz"
+                        icon-name="utility:add"
+                        onclick={handleNewQuiz}
+                        class="slds-float_right"
+                    ></lightning-button>
+                </div>
+                
+                <template if:true={isLoading}>
+                    <lightning-spinner alternative-text="Loading quizzes..."></lightning-spinner>
+                </template>
+                
+                <template if:true={hasQuizzes}>
+                    <div class="quiz-list">
+                        <template for:each={quizzes} for:item="quiz">
+                            <div
+                                key={quiz.quizId}
+                                class={getQuizItemClass}
+                                data-quiz-id={quiz.quizId}
+                                onclick={handleQuizSelect}
+                            >
+                                <div class="slds-grid slds-grid_align-spread">
+                                    <div class="slds-col">
+                                        <div class="slds-text-heading_small">{quiz.name}</div>
+                                        <div class="slds-text-body_small slds-text-color_weak">
+                                            {quiz.levelLabel} • {quiz.targetName}
+                                        </div>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-6 slds-text-align_right">
+                                        <template if:true={quiz.active}>
+                                            <lightning-icon
+                                                icon-name="utility:check"
+                                                size="x-small"
+                                                alternative-text="Active"
+                                                title="Active"
+                                                class="slds-text-color_success"
+                                            ></lightning-icon>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+                
+                <template if:false={hasQuizzes}>
+                    <div class="slds-text-align_center slds-m-top_large">
+                        <p class="slds-text-color_weak">No quizzes found. Create your first quiz!</p>
+                    </div>
+                </template>
+            </div>
+            
+            <!-- Right Panel: Quiz Editor -->
+            <div class="slds-col slds-size_2-of-3 slds-p-around_small quiz-editor-panel">
+                <template if:true={selectedQuiz}>
+                    <c-quiz-editor
+                        quiz={selectedQuiz}
+                        onquizsaved={handleQuizSaved}
+                        onquizdeleted={handleQuizDeleted}
+                    ></c-quiz-editor>
+                </template>
+                
+                <template if:false={selectedQuiz}>
+                    <div class="slds-text-align_center slds-m-top_xx-large">
+                        <lightning-icon
+                            icon-name="standard:quiz"
+                            size="large"
+                            alternative-text="Select a quiz"
+                        ></lightning-icon>
+                        <p class="slds-m-top_medium slds-text-heading_small">Select a quiz to edit</p>
+                        <p class="slds-text-color_weak">or create a new one to get started</p>
+                    </div>
+                </template>
+            </div>
+        </div>
+        
+        <!-- New Quiz Modal -->
+        <template if:true={showNewQuizModal}>
+            <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeNewQuizModal}>
+                            <lightning-icon icon-name="utility:close" size="small" alternative-text="Close"></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 class="slds-text-heading_medium">New Quiz</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium">
+                        <lightning-input
+                            label="Quiz Name"
+                            value={newQuizName}
+                            onchange={handleNewQuizNameChange}
+                            required
+                        ></lightning-input>
+                        
+                        <lightning-combobox
+                            label="Level"
+                            value={newQuizLevel}
+                            options={levelOptions}
+                            onchange={handleNewQuizLevelChange}
+                            required
+                            class="slds-m-top_small"
+                        ></lightning-combobox>
+                        
+                        <template if:true={isLessonLevel}>
+                            <lightning-combobox
+                                label="Lesson"
+                                value={newQuizLessonId}
+                                options={lessonOptions}
+                                onchange={handleNewQuizLessonChange}
+                                required
+                                class="slds-m-top_small"
+                            ></lightning-combobox>
+                        </template>
+                        
+                        <template if:true={isCourseLevel}>
+                            <lightning-combobox
+                                label="Course"
+                                value={newQuizCourseId}
+                                options={courseOptions}
+                                onchange={handleNewQuizCourseChange}
+                                required
+                                class="slds-m-top_small"
+                            ></lightning-combobox>
+                        </template>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        <button class="slds-button slds-button_neutral" onclick={closeNewQuizModal}>Cancel</button>
+                        <button class="slds-button slds-button_brand" onclick={createNewQuiz}>Create Quiz</button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+    </lightning-card>
+</template>

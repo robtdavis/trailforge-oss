@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Is_Correct__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Indicates whether this is the correct answer</description>
+    <inlineHelpText>Check if this is the correct answer for the question</inlineHelpText>
+    <label>Is Correct</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

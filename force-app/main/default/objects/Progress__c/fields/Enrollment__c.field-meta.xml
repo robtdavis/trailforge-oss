@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Enrollment__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <inlineHelpText>Parent enrollment for this lesson progress record.</inlineHelpText>
+    <label>Enrollment</label>
+    <referenceTo>Enrollment__c</referenceTo>
+    <relationshipLabel>Progress Records</relationshipLabel>
+    <relationshipName>Lesson_Progress_Records</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

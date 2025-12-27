@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Quiz_Answer_Option__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>The answer option selected by the learner</description>
+    <inlineHelpText>The chosen answer option for multiple choice questions</inlineHelpText>
+    <label>Quiz Answer Option</label>
+    <referenceTo>Quiz_Answer_Option__c</referenceTo>
+    <relationshipLabel>Responses</relationshipLabel>
+    <relationshipName>Responses</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

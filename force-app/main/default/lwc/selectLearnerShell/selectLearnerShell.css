@@ -1,0 +1,21 @@
+/* Learner List */
+.learner-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--lwc-colorBorder, #c9c9c9);
+    border-radius: 0.25rem;
+}
+
+.learner-option {
+    cursor: pointer;
+    border-bottom: 1px solid var(--lwc-colorBorder, #e5e5e5);
+    transition: background-color 0.1s ease;
+}
+
+.learner-option:hover {
+    background-color: var(--lwc-colorBackgroundRowHover, #f3f3f3);
+}
+
+.learner-option:last-child {
+    border-bottom: none;
+}

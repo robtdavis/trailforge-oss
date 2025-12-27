@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>TrailForge Access Code Entry</masterLabel>
+    <description>External user access code entry for Experience site</description>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__HomePage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="navigationUrl" type="String" label="Navigation URL" 
+                description="URL to navigate to after authentication. Use /s/pagename for Aura sites or /pagename for LWR sites." 
+                default="/s/trailforge-welcome"/>
+            <property name="readOnlyContactId" type="String" label="Guest/Read-Only Contact ID" 
+                description="Contact ID for guest users without an access code. Leave blank to hide the 'Continue as Guest' button."/>
+            <property name="readOnlyContactName" type="String" label="Guest Display Name" 
+                description="Display name for guest users (e.g., 'Guest Learner')" 
+                default="Guest Learner"/>
+        </targetConfig>
+        <targetConfig targets="lightning__AppPage,lightning__RecordPage,lightning__HomePage">
+            <property name="navigationUrl" type="String" label="Navigation URL" 
+                description="URL to navigate to after successful authentication" 
+                default="/lightning/page/home"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

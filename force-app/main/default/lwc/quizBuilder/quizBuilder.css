@@ -1,0 +1,29 @@
+.quiz-list-panel {
+    border-right: 1px solid #dddbda;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.quiz-editor-panel {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.quiz-list {
+    max-height: calc(80vh - 60px);
+    overflow-y: auto;
+}
+
+.quiz-item {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.quiz-item:hover {
+    background-color: #f3f2f2;
+}
+
+.quiz-item.selected {
+    background-color: #e8f4f9;
+    border-left: 3px solid #0176d3;
+}

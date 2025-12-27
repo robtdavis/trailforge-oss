@@ -1,0 +1,119 @@
+<template>
+    <lightning-card title="TrailForge Access Code" icon-name="utility:key">
+        
+        <!-- Loading State -->
+        <template if:true={isLoading}>
+            <div class="slds-align_absolute-center slds-p-around_medium">
+                <lightning-spinner alternative-text="Loading..." size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Content -->
+        <template if:false={isLoading}>
+            <div class="slds-p-around_medium">
+                
+                <!-- Current Code Display -->
+                <template if:true={hasCode}>
+                    <div class="slds-box slds-m-bottom_medium code-display-box">
+                        <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                            <div>
+                                <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_xx-small">Current Code</p>
+                                <p class="code-text">{currentCode}</p>
+                            </div>
+                            <lightning-button-icon 
+                                icon-name="utility:copy" 
+                                variant="border-filled"
+                                alternative-text="Copy to clipboard"
+                                title="Copy to clipboard"
+                                onclick={handleCopyCode}
+                                disabled={isCodeUsed}>
+                            </lightning-button-icon>
+                        </div>
+                    </div>
+
+                    <!-- Status Badge -->
+                    <div class="slds-m-bottom_medium">
+                        <span class={statusBadgeClass}>{codeStatus}</span>
+                    </div>
+
+                    <!-- Timestamps -->
+                    <div class="slds-text-body_small slds-m-bottom_medium">
+                        <template if:true={issuedOn}>
+                            <div class="slds-m-bottom_xx-small">
+                                <span class="slds-text-color_weak">Issued:</span>
+                                <lightning-formatted-date-time value={issuedOn} year="numeric" month="short" day="2-digit" hour="2-digit" minute="2-digit"></lightning-formatted-date-time>
+                            </div>
+                        </template>
+                        <template if:true={expiresOn}>
+                            <div class="slds-m-bottom_xx-small">
+                                <span class="slds-text-color_weak">Expires:</span>
+                                <lightning-formatted-date-time value={expiresOn} year="numeric" month="short" day="2-digit" hour="2-digit" minute="2-digit"></lightning-formatted-date-time>
+                            </div>
+                        </template>
+                        <template if:true={usedOn}>
+                            <div class="slds-m-bottom_xx-small">
+                                <span class="slds-text-color_weak">Used:</span>
+                                <lightning-formatted-date-time value={usedOn} year="numeric" month="short" day="2-digit" hour="2-digit" minute="2-digit"></lightning-formatted-date-time>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <!-- No Code State -->
+                <template if:false={hasCode}>
+                    <div class="slds-illustration slds-illustration_small slds-m-bottom_medium">
+                        <div class="slds-text-align_center slds-p-around_medium">
+                            <lightning-icon icon-name="utility:lock" size="large" class="slds-m-bottom_small"></lightning-icon>
+                            <p class="slds-text-body_regular slds-text-color_weak">No access code generated for this contact.</p>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Custom Expiry Input (only for users with permission) -->
+                <template if:true={canOverrideExpiry}>
+                    <div class="slds-form-element slds-m-bottom_medium">
+                        <lightning-input
+                            type="number"
+                            label="Custom Expiry (hours)"
+                            placeholder="Leave blank for default (24 hours)"
+                            value={customExpiryHours}
+                            onchange={handleExpiryChange}
+                            min="1"
+                            max="168"
+                            step="1">
+                        </lightning-input>
+                        <p class="slds-form-element__help slds-text-body_small">1-168 hours (7 days max)</p>
+                    </div>
+                </template>
+
+                <!-- Action Buttons -->
+                <div class="slds-button-group" role="group">
+                    <lightning-button 
+                        label={generateButtonLabel}
+                        variant="brand" 
+                        onclick={handleGenerateCode}
+                        disabled={isGenerating}>
+                    </lightning-button>
+                    <template if:true={hasCode}>
+                        <lightning-button 
+                            label="Clear Code" 
+                            variant="destructive-text" 
+                            onclick={handleClearCode}
+                            disabled={isGenerating}>
+                        </lightning-button>
+                    </template>
+                </div>
+
+                <!-- Success Toast -->
+                <template if:true={showCopySuccess}>
+                    <div class="slds-notify slds-notify_toast slds-theme_success slds-m-top_medium copy-toast" role="status">
+                        <lightning-icon icon-name="utility:success" variant="inverse" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                        <span>Code copied to clipboard!</span>
+                    </div>
+                </template>
+
+            </div>
+        </template>
+
+    </lightning-card>
+</template>

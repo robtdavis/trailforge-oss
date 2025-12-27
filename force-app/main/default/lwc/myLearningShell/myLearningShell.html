@@ -1,0 +1,134 @@
+<template>
+    <lightning-card title="My Learning Dashboard" icon-name="standard:education">
+        <div slot="actions">
+            <lightning-button
+                variant="neutral"
+                label="Back to Welcome"
+                icon-name="utility:back"
+                onclick={handleBackToWelcome}>
+            </lightning-button>
+        </div>
+        
+        <!-- Loading State -->
+        <template if:true={isLoading}>
+            <div style="min-height: 400px; display: flex; align-items: center; justify-content: center;">
+                <div class="slds-text-align_center">
+                    <lightning-spinner alternative-text="Loading your courses" size="large"></lightning-spinner>
+                    <p class="slds-text-align_center slds-text-body_regular slds-text-color_weak slds-m-top_medium">
+                        Loading your courses…
+                    </p>
+                </div>
+            </div>
+        </template>
+        
+        <!-- Error State -->
+        <template if:true={error}>
+            <div class="slds-m-around_medium">
+                <div class="slds-text-color_error">
+                    <lightning-icon icon-name="utility:error" 
+                                    alternative-text="Error" 
+                                    size="small" 
+                                    class="slds-m-right_small"></lightning-icon>
+                    Unable to load your enrollments. Please try again later.
+                    <p class="slds-text-body_small slds-m-top_small">{error}</p>
+                </div>
+            </div>
+        </template>
+        
+        <!-- Course Grid -->
+        <template if:false={isLoading}>
+            <template if:true={hasEnrollments}>
+            <div class="slds-p-around_medium">
+                <div class="slds-grid slds-wrap slds-gutters">
+                    <template for:each={enrollments} for:item="enrollment">
+                        <div key={enrollment.enrollmentId} class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3">
+                            <article class="slds-card slds-card_boundary slds-m-bottom_medium">
+                                <!-- Course Thumbnail -->
+                                <div class="slds-card__header slds-grid tf-course-thumb-container">
+                                    <template if:true={enrollment.thumbnailUrl}>
+                                        <img src={enrollment.thumbnailUrl} 
+                                             alt={enrollment.courseName}
+                                             onerror={handleImageError}
+                                             class="tf-course-thumb__img" />
+                                    </template>
+                                    <div class="tf-course-thumb-fallback">
+                                        <lightning-icon icon-name="standard:education"
+                                                        size="large"
+                                                        alternative-text="Course">
+                                        </lightning-icon>
+                                    </div>
+                                </div>
+                                
+                                <!-- Course Body -->
+                                <div class="slds-card__body slds-card__body_inner">
+                                    <h3 class="slds-text-heading_small slds-truncate slds-m-bottom_x-small" 
+                                        title={enrollment.courseName}>
+                                        {enrollment.courseName}
+                                    </h3>
+                                    
+                                    <template if:true={enrollment.truncatedDescription}>
+                                        <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">
+                                            {enrollment.truncatedDescription}
+                                        </p>
+                                    </template>
+                                    
+                                    <div class="slds-m-bottom_small">
+                                        <lightning-badge label={enrollment.status} 
+                                                       variant={enrollment.statusVariant}>
+                                        </lightning-badge>
+                                    </div>
+                                    
+                                    <div class="slds-m-bottom_x-small">
+                                        <div class="slds-grid slds-grid_align-spread">
+                                            <span class="slds-text-body_small slds-text-color_weak">Progress</span>
+                                            <span class="slds-text-body_small slds-text-color_weak">
+                                                {enrollment.progressPercentage}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <lightning-progress-bar value={enrollment.progressPercentage} 
+                                                          variant="circular">
+                                    </lightning-progress-bar>
+                                </div>
+                                
+                                <!-- Course Footer -->
+                                <footer class="slds-card__footer">
+                                    <lightning-button label="Continue Learning" 
+                                                    variant="brand" 
+                                                    class="slds-button_stretch"
+                                                    data-course-id={enrollment.courseId}
+                                                    data-enrollment-id={enrollment.enrollmentId}
+                                                    onclick={handleContinueLearning}>
+                                    </lightning-button>
+                                </footer>
+                            </article>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+        <!-- Empty State -->
+        <template if:true={hasEnrollments}>
+        </template>
+        <template if:false={hasEnrollments}>
+            <template if:false={error}>
+                <template if:false={isLoading}>
+                    <div class="slds-m-around_large slds-text-align_center">
+                        <lightning-icon icon-name="custom:custom78" 
+                                        alternative-text="No courses" 
+                                        size="large" 
+                                        class="slds-m-bottom_medium"></lightning-icon>
+                        <h3 class="slds-text-heading_small slds-m-bottom_x-small">
+                            Start Your Learning Journey
+                        </h3>
+                        <p class="slds-text-body_regular slds-text-color_weak">
+                            You're not enrolled in any courses yet. Browse our catalog to get started!
+                        </p>
+                    </div>
+                </template>
+            </template>
+        </template>
+        </template>
+    </lightning-card>
+</template>

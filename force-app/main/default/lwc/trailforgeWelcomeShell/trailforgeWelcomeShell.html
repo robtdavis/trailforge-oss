@@ -1,0 +1,123 @@
+<template>
+    <article class="slds-card">
+        <!-- Custom Card Header with Cow Logo -->
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <span class="tf-custom-icon">
+                        <img src={cowLogoUrl} alt="TrailForge" class="tf-cow-logo"/>
+                    </span>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">
+                        <span class="slds-text-heading_small">Welcome to TrailForge</span>
+                    </h2>
+                </div>
+            </header>
+        </div>
+        
+        <div class="slds-card__body slds-card__body_inner">
+            <!-- Learner Selection (when no contactId) -->
+            <template if:false={displayContactId}>
+                <div class="welcome-body">
+                    <p class="slds-text-align_center slds-text-heading_small slds-m-bottom_medium">
+                        Select a learner to begin
+                    </p>
+                    <c-select-learner-shell
+                        onlearnerselected={handleLearnerSelected}>
+                    </c-select-learner-shell>
+                </div>
+            </template>
+
+        <!-- Profile Loading/Ready States (when contactId exists) -->
+        <template if:true={displayContactId}>
+            <!-- Loading State -->
+            <template if:true={isLoading}>
+                <div class="welcome-body">
+                    <div class="slds-align_absolute-center slds-m-vertical_large">
+                        <lightning-spinner alternative-text="Preparing your profile" size="medium"></lightning-spinner>
+                    </div>
+                    <p class="slds-text-align_center slds-text-body_regular slds-text-color_weak slds-m-top_medium">
+                        Setting up your TrailForge learning profile…
+                    </p>
+                </div>
+            </template>
+
+            <!-- Error State -->
+            <template if:true={hasError}>
+                <div class="welcome-body">
+                    <div class="slds-text-align_center">
+                        <lightning-icon icon-name="utility:error" 
+                                        variant="error" 
+                                        size="medium" 
+                                        class="slds-m-bottom_small"></lightning-icon>
+                        <p class="slds-text-color_error slds-text-body_regular">
+                            We couldn't prepare your learning profile. Please try again or contact an admin.
+                        </p>
+                        <template if:true={errorMessage}>
+                            <p class="slds-text-body_small slds-text-color_weak slds-m-top_small">
+                                {errorMessage}
+                            </p>
+                        </template>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Ready State -->
+            <template if:true={isReady}>
+                <div class="welcome-body">
+                    <div class="slds-text-align_center">
+                        <lightning-icon icon-name="action:approval" 
+                                        variant="success" 
+                                        size="large" 
+                                        class="slds-m-bottom_medium"></lightning-icon>
+                        
+                        <h2 class="slds-text-heading_medium slds-m-bottom_medium">
+                            Your TrailForge learning profile is ready!
+                        </h2>
+                        
+                        <div class="welcome-stats slds-m-bottom_large">
+                            <div class="stat-item">
+                                <div class="stat-value">{enrollmentCount}</div>
+                                <div class="stat-label">Course{enrollmentCountPlural} Enrolled</div>
+                            </div>
+                            
+                            <div class="stat-item">
+                                <div class="stat-value">{overallProgress}%</div>
+                                <div class="stat-label">Overall Progress</div>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-text-align_center slds-m-bottom_large">
+                            <p class="slds-text-body_small slds-text-color_weak">
+                                <strong>{completedCount}</strong> Completed · 
+                                <strong>{inProgressCount}</strong> In Progress · 
+                                <strong>{notStartedCount}</strong> Not Started
+                            </p>
+                        </div>
+                        
+                        <template if:true={primaryCourseName}>
+                            <p class="slds-text-body_regular slds-text-color_weak slds-m-bottom_large">
+                                Next up: <strong>{primaryCourseName}</strong>
+                            </p>
+                        </template>
+                        
+                        <div class="slds-m-top_medium slds-text-body_small">
+                            <a href="javascript:void(0);" onclick={handleChangeLearner}>
+                                Select a different learner
+                            </a>
+                        </div>
+                        
+                        <lightning-button
+                            label="Continue to My Learning"
+                            variant="brand"
+                            class="slds-m-top_large"
+                            onclick={handleContinue}>
+                        </lightning-button>
+                    </div>
+                </div>
+            </template>
+        </template>
+        </div>
+    </article>
+</template>

@@ -1,0 +1,102 @@
+<template>
+    <div class="question-editor slds-box slds-m-bottom_small">
+        <div class="slds-grid slds-grid_align-spread slds-m-bottom_small">
+            <div class="slds-col">
+                <h3 class="slds-text-heading_small">Question {displayNumber}</h3>
+            </div>
+            <div class="slds-col slds-no-flex">
+                <lightning-button-icon
+                    icon-name="utility:delete"
+                    alternative-text="Delete Question"
+                    title="Delete Question"
+                    onclick={handleDeleteQuestion}
+                ></lightning-button-icon>
+            </div>
+        </div>
+        
+        <lightning-textarea
+            label="Question Text"
+            value={question.questionText}
+            onchange={handleQuestionTextChange}
+            required
+        ></lightning-textarea>
+        
+        <div class="slds-grid slds-wrap slds-gutters slds-m-top_small">
+            <div class="slds-col slds-size_1-of-3">
+                <lightning-input
+                    label="Points"
+                    type="number"
+                    value={question.points}
+                    onchange={handlePointsChange}
+                    min="0"
+                ></lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-3">
+                <lightning-input
+                    type="checkbox"
+                    label="Required"
+                    checked={question.required}
+                    onchange={handleRequiredChange}
+                ></lightning-input>
+            </div>
+        </div>
+        
+        <!-- Answer Options -->
+        <div class="slds-m-top_medium">
+            <div class="slds-clearfix slds-m-bottom_x-small">
+                <div class="slds-float_left">
+                    <strong>Answer Options</strong>
+                </div>
+                <div class="slds-float_right">
+                    <lightning-button
+                        label="Add Option"
+                        icon-name="utility:add"
+                        onclick={handleAddOption}
+                        variant="neutral"
+                        size="small"
+                    ></lightning-button>
+                </div>
+            </div>
+            
+            <template if:true={hasOptions}>
+                <template for:each={question.options} for:item="option" for:index="optIndex">
+                    <div key={option.optionId} class="option-row slds-grid slds-grid_vertical-align-center slds-m-bottom_x-small">
+                        <div class="slds-col slds-size_1-of-12 slds-text-align_center">
+                            <lightning-input
+                                type="radio"
+                                name={radioGroupName}
+                                label="Correct"
+                                checked={option.isCorrect}
+                                data-option-index={optIndex}
+                                onchange={handleCorrectChange}
+                            ></lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_10-of-12">
+                            <lightning-input
+                                value={option.answerText}
+                                placeholder="Enter answer option"
+                                data-option-index={optIndex}
+                                onchange={handleOptionTextChange}
+                            ></lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_1-of-12 slds-text-align_center">
+                            <lightning-button-icon
+                                icon-name="utility:delete"
+                                alternative-text="Delete Option"
+                                data-option-index={optIndex}
+                                onclick={handleDeleteOption}
+                                variant="bare"
+                            ></lightning-button-icon>
+                        </div>
+                    </div>
+                </template>
+            </template>
+            
+            <template if:false={hasOptions}>
+                <p class="slds-text-color_weak slds-text-align_center slds-m-vertical_small">
+                    No answer options yet. Add at least one option!
+                </p>
+            </template>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,230 @@
+<template>
+    <lightning-card title={quizTitle} icon-name="standard:record">
+        <!-- Action Buttons -->
+        <div slot="actions">
+            <lightning-button
+                label="Back to Lesson"
+                variant="neutral"
+                icon-name="utility:back"
+                onclick={handleBackToLesson}>
+            </lightning-button>
+        </div>
+        
+        <!-- Loading State -->
+        <template if:true={isLoading}>
+            <div class="slds-m-around_medium">
+                <div class="slds-align_absolute-center">
+                    <lightning-spinner alternative-text="Loading quiz..." size="medium"></lightning-spinner>
+                </div>
+            </div>
+        </template>
+        
+        <!-- Error State -->
+        <template if:true={error}>
+            <div class="slds-m-around_medium">
+                <div class="slds-text-color_error">
+                    <lightning-icon icon-name="utility:error" size="small" class="slds-m-right_small"></lightning-icon>
+                    {error}
+                </div>
+            </div>
+        </template>
+        
+        <!-- Quiz Content -->
+        <template if:true={hasQuiz}>
+            <div class="slds-p-around_medium">
+                
+                <!-- Review Mode Banner -->
+                <template if:true={reviewMode}>
+                    <div class="slds-box slds-theme_warning slds-m-bottom_medium">
+                        <div class="slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-col">
+                                <lightning-icon icon-name="utility:preview" size="small" class="slds-m-right_x-small"></lightning-icon>
+                                <strong>{reviewBannerMessage}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                
+                <!-- Quiz Instructions -->
+                <template if:true={quizContext.instructions}>
+                    <div class="slds-box slds-theme_info slds-m-bottom_medium">
+                        <h3 class="slds-text-heading_small slds-m-bottom_x-small">Instructions</h3>
+                        <p class="slds-text-body_regular">{quizContext.instructions}</p>
+                    </div>
+                </template>
+                
+                <!-- Quiz Metadata -->
+                <div class="slds-grid slds-wrap slds-gutters_small slds-m-bottom_medium">
+                    <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
+                        <div class="slds-box slds-box_x-small slds-text-align_center">
+                            <div class="slds-text-color_weak slds-text-body_small">Passing Score</div>
+                            <div class="slds-text-heading_small">{passingScoreDisplay}</div>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
+                        <div class="slds-box slds-box_x-small slds-text-align_center">
+                            <div class="slds-text-color_weak slds-text-body_small">Total Points</div>
+                            <div class="slds-text-heading_small">{maxScoreDisplay}</div>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
+                        <div class="slds-box slds-box_x-small slds-text-align_center">
+                            <div class="slds-text-color_weak slds-text-body_small">Questions</div>
+                            <div class="slds-text-heading_small">{quizContext.questions.length}</div>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
+                        <div class="slds-box slds-box_x-small slds-text-align_center">
+                            <div class="slds-text-color_weak slds-text-body_small">Current Attempt</div>
+                            <div class="slds-text-heading_small">{attemptInfo}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Previous Attempt Results (if exists) -->
+                <template if:true={quizContext.latestAttempt}>
+                    <div class="slds-box slds-m-bottom_medium">
+                        <h3 class="slds-text-heading_small slds-m-bottom_small">Previous Attempt</h3>
+                        <p class="slds-text-body_regular">
+                            Score: <strong>{quizContext.latestAttempt.scorePercent}%</strong>
+                            ({quizContext.latestAttempt.score} points) -
+                            <lightning-badge 
+                                label={previousAttemptBadgeLabel}
+                                class={previousAttemptBadgeClass}>
+                            </lightning-badge>
+                        </p>
+                    </div>
+                </template>
+                
+                <!-- Quiz Results (after submission) -->
+                <template if:true={hasQuizResult}>
+                    <div class="slds-box slds-m-bottom_medium">
+                        <h3 class="slds-text-heading_small slds-m-bottom_small">
+                            <template if:true={quizResult.passed}>
+                                <lightning-icon icon-name="utility:success" variant="success" size="small"></lightning-icon>
+                                Quiz Passed!
+                            </template>
+                            <template if:false={quizResult.passed}>
+                                <lightning-icon icon-name="utility:warning" variant="warning" size="small"></lightning-icon>
+                                Quiz Not Passed
+                            </template>
+                        </h3>
+                        <p class="slds-text-body_regular">
+                            <strong>Your Score:</strong> {quizResult.scorePercent}% ({quizResult.score} points)
+                        </p>
+                        <p class="slds-text-body_regular slds-m-top_x-small">{quizResult.message}</p>
+                    </div>
+                </template>
+                
+                <!-- Can Take Quiz Check -->
+                <template if:false={canTakeQuiz}>
+                    <div class="slds-box slds-theme_warning slds-m-bottom_medium">
+                        <p class="slds-text-body_regular">
+                            <lightning-icon icon-name="utility:info" size="small"></lightning-icon>
+                            You have reached the maximum number of attempts for this quiz or retakes are not allowed.
+                        </p>
+                    </div>
+                </template>
+                
+                <!-- Questions (only if can take quiz) -->
+                <template if:true={canTakeQuiz}>
+                    <div class="slds-m-top_large">
+                        <h3 class="slds-text-heading_small slds-m-bottom_medium">Questions</h3>
+                        
+                        <template for:each={quizContext.questions} for:item="question" for:index="questionIndex">
+                            <div key={question.questionId} class="slds-box slds-m-bottom_medium">
+                                
+                                <!-- Question Header -->
+                                <div class="slds-grid slds-grid_vertical-align-start slds-m-bottom_small">
+                                    <div class="slds-col slds-size_1-of-12">
+                                        <span class="slds-badge">{questionIndex}</span>
+                                    </div>
+                                    <div class="slds-col slds-size_10-of-12">
+                                        <h4 class="slds-text-heading_small">{question.questionText}</h4>
+                                        <template if:true={question.required}>
+                                            <span class="slds-text-color_error slds-text-body_small">*Required</span>
+                                        </template>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-12 slds-text-align_right">
+                                        <span class="slds-text-body_small slds-text-color_weak">
+                                            {question.points} pts
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Answer Options -->
+                                <div class="slds-m-left_large">
+                                    <lightning-radio-group
+                                        name={question.questionId}
+                                        options={question.options}
+                                        value={question.selectedValue}
+                                        data-question-id={question.questionId}
+                                        onchange={handleAnswerSelect}
+                                        disabled={isAnswerDisabled}
+                                        required={question.required}>
+                                    </lightning-radio-group>
+                                    
+                                    <!-- Show correct/incorrect indicators in review mode -->
+                                    <template if:true={reviewMode}>
+                                        <div class="slds-m-top_x-small">
+                                            <template for:each={question.options} for:item="option">
+                                                <div key={option.value} class="slds-text-body_small">
+                                                    <template if:true={option.correct}>
+                                                        <lightning-icon icon-name="utility:success" 
+                                                                        variant="success" 
+                                                                        size="xx-small" 
+                                                                        class="slds-m-right_xx-small">
+                                                        </lightning-icon>
+                                                        <span class="slds-text-color_success">{option.label} (Correct Answer)</span>
+                                                    </template>
+                                                    <template if:true={option.selected}>
+                                                        <template if:false={option.correct}>
+                                                            <lightning-icon icon-name="utility:error" 
+                                                                            variant="error" 
+                                                                            size="xx-small" 
+                                                                            class="slds-m-right_xx-small">
+                                                            </lightning-icon>
+                                                            <span class="slds-text-color_error">{option.label} (Your Answer - Incorrect)</span>
+                                                        </template>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                                
+                            </div>
+                        </template>
+                    </div>
+                    
+                    <!-- Submit Button (only show if not in review mode) -->
+                    <template if:true={showSubmitButton}>
+                        <div class="slds-m-top_large slds-text-align_center">
+                            <lightning-button
+                                label="Submit Quiz"
+                                variant="brand"
+                                onclick={handleSubmitQuiz}
+                                disabled={isSubmitting}>
+                            </lightning-button>
+                            <template if:true={isSubmitting}>
+                                <lightning-spinner alternative-text="Submitting..." size="small"></lightning-spinner>
+                            </template>
+                        </div>
+                    </template>
+                </template>
+            </div>
+        </template>
+        
+        <!-- No Quiz State -->
+        <template if:false={hasQuiz}>
+            <template if:false={isLoading}>
+                <template if:false={error}>
+                    <div class="slds-m-around_large slds-text-align_center">
+                        <lightning-icon icon-name="utility:info" size="medium" class="slds-m-bottom_small"></lightning-icon>
+                        <p class="slds-text-heading_small">No quiz available</p>
+                    </div>
+                </template>
+            </template>
+        </template>
+    </lightning-card>
+</template>

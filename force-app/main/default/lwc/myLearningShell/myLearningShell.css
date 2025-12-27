@@ -1,0 +1,36 @@
+/* Course thumbnail container */
+.tf-course-thumb-container {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    padding: 0;
+    overflow: hidden;
+    background-color: #f3f3f3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Course thumbnail image */
+.tf-course-thumb__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
+/* Fallback icon (shown when image is missing or broken) */
+.tf-course-thumb-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background-color: #f3f3f3;
+    position: relative;
+    z-index: 1;
+}

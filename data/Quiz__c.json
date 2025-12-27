@@ -1,0 +1,22 @@
+{
+    "records": [
+        {
+            "attributes": {
+                "type": "Quiz__c",
+                "referenceId": "Quiz__cRef1"
+            },
+            "Name": "AI Quiz",
+            "Course__c": "@Course__cRef1",
+            "Active__c": true,
+            "Allow_Retakes__c": true,
+            "Level__c": "Course",
+            "Max_Score__c": 10,
+            "Modal_Size__c": "medium",
+            "Mode__c": "Training",
+            "Passing_Score__c": 70,
+            "Shuffle_Questions__c": true,
+            "Sort_Order__c": 1,
+            "Archived__c": false
+        }
+    ]
+}

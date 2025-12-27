@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Explanation__c</fullName>
+    <description>Explanation shown to learners in Training mode after they answer the question. Helps reinforce learning by explaining why the correct answer is right.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Explanation shown after answering (Training mode only). Explain why the correct answer is right.</inlineHelpText>
+    <label>Explanation</label>
+    <length>2000</length>
+    <trackTrending>false</trackTrending>
+    <type>Html</type>
+    <visibleLines>10</visibleLines>
+</CustomField>

@@ -1,0 +1,194 @@
+/* Card Container */
+.matilda-card {
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem 2rem;
+    max-width: 720px;
+    margin: 0 auto;
+    font-family: 'Salesforce Sans', Arial, sans-serif;
+}
+
+/* Header Row */
+.matilda-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* Cow Logo */
+.matilda-logo {
+    width: 100px;
+    max-width: 100px;
+    height: auto;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+/* Header Text */
+.matilda-header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.matilda-headline {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #16325c;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.matilda-tagline {
+    font-size: 0.95rem;
+    color: #706e6b;
+    margin: 0;
+    font-style: italic;
+}
+
+/* Content Area */
+.matilda-content {
+    line-height: 1.7;
+    color: #3e3e3c;
+    padding-top: 1rem;
+}
+
+.matilda-manifesto-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #16325c;
+    margin: 0 0 0.25rem 0;
+}
+
+.matilda-subtitle {
+    font-size: 0.9rem;
+    color: #706e6b;
+    margin: 0 0 1.25rem 0;
+    font-style: italic;
+}
+
+.matilda-paragraph {
+    margin: 0 0 1rem 0;
+    font-size: 0.95rem;
+}
+
+/* Bullet List */
+.matilda-list {
+    margin: 0 0 1rem 0;
+    padding-left: 1.5rem;
+    list-style-type: disc;
+}
+
+.matilda-list li {
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.matilda-list li:last-child {
+    margin-bottom: 0;
+}
+
+/* Closing Statement */
+.matilda-closing {
+    margin: 1.5rem 0 0 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #16325c;
+    text-align: center;
+}
+
+/* FAQ Styles */
+.faq-content {
+    padding-top: 0.5rem;
+}
+
+.faq-item {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.faq-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.faq-question {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #16325c;
+    margin: 0 0 0.5rem 0;
+}
+
+.faq-answer {
+    font-size: 0.95rem;
+    color: #3e3e3c;
+    margin: 0 0 0.75rem 0;
+    line-height: 1.65;
+}
+
+.faq-answer:last-child {
+    margin-bottom: 0;
+}
+
+.faq-repo-link {
+    font-size: 0.95rem;
+    color: #0070d2;
+    margin: 0.5rem 0 0 0;
+    padding: 0.75rem 1rem;
+    background-color: #f4f6f9;
+    border-radius: 6px;
+    border-left: 3px solid #0070d2;
+}
+
+/* Tabset Styling Overrides */
+.matilda-card lightning-tabset {
+    --lwc-colorBorder: #e5e5e5;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 480px) {
+    .matilda-card {
+        padding: 1rem 1.25rem;
+        border-radius: 8px;
+    }
+
+    .matilda-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+    }
+
+    .matilda-header-text {
+        align-items: center;
+    }
+
+    .matilda-logo {
+        width: 80px;
+        max-width: 80px;
+    }
+
+    .matilda-headline {
+        font-size: 1.35rem;
+    }
+
+    .matilda-manifesto-title {
+        font-size: 1.05rem;
+    }
+
+    .matilda-paragraph,
+    .matilda-list li,
+    .faq-answer {
+        font-size: 0.9rem;
+    }
+
+    .faq-question {
+        font-size: 1rem;
+    }
+}

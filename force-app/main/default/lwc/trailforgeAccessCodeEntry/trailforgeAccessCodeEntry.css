@@ -1,0 +1,46 @@
+.access-code-container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.entry-form-box {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.authenticated-box {
+    background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
+    border-radius: 8px;
+    padding: 2rem;
+}
+
+.code-input {
+    font-size: 1.25rem;
+    text-align: center;
+    letter-spacing: 0.1em;
+    font-family: monospace;
+}
+
+/* Override lightning-input styles for code input */
+.code-input input {
+    text-align: center !important;
+    font-size: 1.25rem !important;
+    letter-spacing: 0.15em !important;
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', 'Droid Sans Mono', monospace !important;
+    text-transform: uppercase !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+    .access-code-container {
+        padding: 0.5rem;
+    }
+    
+    .entry-form-box,
+    .authenticated-box {
+        padding: 1.5rem;
+    }
+}

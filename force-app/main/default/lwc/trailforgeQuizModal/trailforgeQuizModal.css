@@ -1,0 +1,12 @@
+.tf-quiz-question {
+    min-height: 300px;
+}
+
+/* Ensure modal is on top */
+.slds-modal {
+    z-index: 9001;
+}
+
+.slds-backdrop {
+    z-index: 9000;
+}

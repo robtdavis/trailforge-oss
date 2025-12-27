@@ -1,0 +1,170 @@
+<template>
+    <div class="lesson-viewer">
+        
+        <!-- No Lesson ID provided -->
+        <template if:false={hasLessonId}>
+            <div class="slds-p-around_large slds-text-align_center">
+                <lightning-icon icon-name="utility:warning" variant="warning" size="large"></lightning-icon>
+                <p class="slds-m-top_medium slds-text-color_weak">
+                    No lesson selected.
+                </p>
+            </div>
+        </template>
+        
+        <template if:true={hasLessonId}>
+            <!-- Loading Spinner -->
+            <template if:true={isLoading}>
+                <div class="slds-p-around_large slds-text-align_center">
+                    <lightning-spinner alternative-text="Loading lesson..." size="medium"></lightning-spinner>
+                </div>
+            </template>
+            
+            <!-- Error Message -->
+            <template if:true={error}>
+                <div class="slds-p-around_medium">
+                    <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                        <span class="slds-assistive-text">Error</span>
+                        <h2>{error}</h2>
+                    </div>
+                </div>
+            </template>
+            
+            <!-- Lesson Content -->
+            <template if:false={isLoading}>
+                <template if:false={error}>
+                    
+                    <!-- Lesson Title -->
+                    <header class="lesson-header slds-p-around_medium slds-border_bottom">
+                        <h1 class="slds-text-heading_large">{lessonName}</h1>
+                    </header>
+                    
+                    <!-- Content Area -->
+                    <div class="lesson-content slds-p-around_medium">
+                        
+                        <!-- No content type selected -->
+                        <template if:true={showSelectType}>
+                            <div class="slds-illustration slds-illustration_small slds-p-around_large slds-text-align_center">
+                                <lightning-icon icon-name="utility:info" size="large" class="slds-m-bottom_medium"></lightning-icon>
+                                <p class="slds-text-body_regular slds-text-color_weak">
+                                    This lesson has no content type configured.
+                                </p>
+                            </div>
+                        </template>
+                        
+                        <!-- No content available -->
+                        <template if:true={showNoContent}>
+                            <div class="slds-illustration slds-illustration_small slds-p-around_large slds-text-align_center">
+                                <lightning-icon icon-name="utility:info" size="large" class="slds-m-bottom_medium"></lightning-icon>
+                                <p class="slds-text-body_regular slds-text-color_weak">
+                                    No content has been added to this lesson yet.
+                                </p>
+                            </div>
+                        </template>
+                        
+                        <!-- Unsupported content type -->
+                        <template if:true={isUnsupportedType}>
+                            <div class="slds-illustration slds-illustration_small slds-p-around_large slds-text-align_center">
+                                <lightning-icon icon-name="utility:warning" variant="warning" size="large" class="slds-m-bottom_medium"></lightning-icon>
+                                <p class="slds-text-body_regular slds-text-color_weak">
+                                    Content type "{contentType}" is not supported in this viewer.
+                                </p>
+                            </div>
+                        </template>
+                        
+                        <!-- Markdown Content -->
+                        <template if:true={isMarkdown}>
+                            <template if:true={hasContent}>
+                                <div class="markdown-content" lwc:dom="manual"></div>
+                            </template>
+                        </template>
+                        
+                        <!-- HTML Content -->
+                        <template if:true={isHtml}>
+                            <template if:true={hasContent}>
+                                <div class="html-content" lwc:dom="manual"></div>
+                            </template>
+                        </template>
+                        
+                        <!-- URL Content -->
+                        <template if:true={isUrl}>
+                            <template if:true={hasContent}>
+                                <div class="url-content slds-text-align_center slds-p-around_large">
+                                    <lightning-icon icon-name="utility:new_window" size="large" class="slds-m-bottom_medium"></lightning-icon>
+                                    <p class="slds-m-bottom_medium">This lesson links to external content.</p>
+                                    <lightning-button
+                                        label="Open Content"
+                                        variant="brand"
+                                        icon-name="utility:new_window"
+                                        icon-position="right"
+                                        onclick={handleOpenUrl}>
+                                    </lightning-button>
+                                </div>
+                            </template>
+                        </template>
+                        
+                        <!-- Video Content -->
+                        <template if:true={isVideo}>
+                            <template if:true={hasContent}>
+                                <div class="video-content">
+                                    <template if:true={isEmbeddableVideo}>
+                                        <div class="video-wrapper">
+                                            <iframe 
+                                                src={videoEmbedUrl}
+                                                frameborder="0"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowfullscreen>
+                                            </iframe>
+                                        </div>
+                                    </template>
+                                    <template if:true={isDirectVideo}>
+                                        <video controls class="direct-video">
+                                            <source src={externalUrl}>
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </template>
+                                    <template if:false={isEmbeddableVideo}>
+                                        <template if:false={isDirectVideo}>
+                                            <div class="slds-text-align_center slds-p-around_large">
+                                                <lightning-icon icon-name="utility:video" size="large" class="slds-m-bottom_medium"></lightning-icon>
+                                                <p class="slds-m-bottom_medium">Video content available.</p>
+                                                <lightning-button
+                                                    label="Watch Video"
+                                                    variant="brand"
+                                                    icon-name="utility:new_window"
+                                                    icon-position="right"
+                                                    onclick={handleOpenUrl}>
+                                                </lightning-button>
+                                            </div>
+                                        </template>
+                                    </template>
+                                </div>
+                            </template>
+                        </template>
+                        
+                        <!-- PDF Content -->
+                        <template if:true={isPdf}>
+                            <template if:true={hasContent}>
+                                <div class="pdf-content">
+                                    <div class="pdf-embed">
+                                        <iframe src={externalUrl} class="pdf-viewer"></iframe>
+                                    </div>
+                                    <div class="slds-text-align_center slds-m-top_small">
+                                        <lightning-button
+                                            label="Open PDF in New Tab"
+                                            variant="neutral"
+                                            icon-name="utility:new_window"
+                                            icon-position="right"
+                                            onclick={handleOpenUrl}>
+                                        </lightning-button>
+                                    </div>
+                                </div>
+                            </template>
+                        </template>
+                        
+                    </div>
+                </template>
+            </template>
+        </template>
+        
+    </div>
+</template>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Show_Complete_Button__c</fullName>
+    <label>Show Complete Button</label>
+    <description>Controls whether the Complete button is shown on the lesson modal. When checked, learners can mark the lesson complete. When unchecked, the button is hidden.</description>
+    <inlineHelpText>Check to show the Complete button on this lesson. Leave unchecked to hide it (useful for auto-complete lessons or informational content).</inlineHelpText>
+    <type>Checkbox</type>
+    <defaultValue>true</defaultValue>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+</CustomField>

@@ -1,0 +1,121 @@
+<template>
+    <div class="quiz-editor">
+        <div class="slds-page-header">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <div class="slds-media__body">
+                            <h1 class="slds-page-header__title slds-truncate">{quiz.name}</h1>
+                            <p class="slds-text-body_small">{quiz.levelLabel} • {quiz.targetName}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-grid slds-align-top">
+                    <lightning-button-menu
+                        alternative-text="Quiz Actions"
+                        icon-name="utility:down"
+                        menu-alignment="right"
+                    >
+                        <lightning-menu-item value="archive" label="Archive Quiz" onclick={handleArchiveQuiz}></lightning-menu-item>
+                    </lightning-button-menu>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quiz Settings -->
+        <lightning-accordion active-section-name={activeSections} allow-multiple-sections-open>
+            <lightning-accordion-section name="settings" label="Quiz Settings">
+                <div class="slds-grid slds-wrap slds-gutters">
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input
+                            label="Passing Score (%)"
+                            type="number"
+                            value={quiz.passingScore}
+                            onchange={handlePassingScoreChange}
+                            min="0"
+                            max="100"
+                        ></lightning-input>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input
+                            label="Max Attempts"
+                            type="number"
+                            value={quiz.maxAttempts}
+                            onchange={handleMaxAttemptsChange}
+                            min="0"
+                        ></lightning-input>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input
+                            type="checkbox"
+                            label="Allow Retakes"
+                            checked={quiz.allowRetakes}
+                            onchange={handleAllowRetakesChange}
+                        ></lightning-input>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input
+                            type="checkbox"
+                            label="Active"
+                            checked={quiz.isActive}
+                            onchange={handleActiveChange}
+                        ></lightning-input>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1">
+                        <lightning-textarea
+                            label="Instructions"
+                            value={quiz.instructions}
+                            onchange={handleInstructionsChange}
+                        ></lightning-textarea>
+                    </div>
+                </div>
+                <div class="slds-m-top_small">
+                    <lightning-button
+                        variant="brand"
+                        label="Save Settings"
+                        onclick={handleSaveSettings}
+                    ></lightning-button>
+                </div>
+            </lightning-accordion-section>
+            
+            <!-- Questions -->
+            <lightning-accordion-section name="questions" label={questionsLabel}>
+                <div class="slds-m-bottom_small">
+                    <lightning-button
+                        label="Add Question"
+                        icon-name="utility:add"
+                        onclick={handleAddQuestion}
+                    ></lightning-button>
+                </div>
+                
+                <template if:true={hasQuestions}>
+                    <template for:each={quiz.questions} for:item="question" for:index="index">
+                        <c-question-editor
+                            key={question.questionId}
+                            question={question}
+                            question-number={index}
+                            onquestionchanged={handleQuestionChanged}
+                            onquestiondeleted={handleQuestionDeleted}
+                        ></c-question-editor>
+                    </template>
+                </template>
+                
+                <template if:false={hasQuestions}>
+                    <div class="slds-text-align_center slds-m-vertical_medium">
+                        <p class="slds-text-color_weak">No questions yet. Add your first question!</p>
+                    </div>
+                </template>
+                
+                <template if:true={hasQuestions}>
+                    <div class="slds-m-top_medium">
+                        <lightning-button
+                            variant="brand"
+                            label="Save All Questions"
+                            onclick={handleSaveAllQuestions}
+                        ></lightning-button>
+                    </div>
+                </template>
+            </lightning-accordion-section>
+        </lightning-accordion>
+    </div>
+</template>

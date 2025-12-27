@@ -1,0 +1,10 @@
+.question-editor {
+    background-color: #fafaf9;
+}
+
+.option-row {
+    background-color: white;
+    padding: 0.5rem;
+    border: 1px solid #dddbda;
+    border-radius: 0.25rem;
+}

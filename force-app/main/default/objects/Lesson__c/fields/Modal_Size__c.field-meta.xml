@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Modal_Size__c</fullName>
+    <label>Modal Size</label>
+    <description>Controls the size of the lesson modal when this lesson is displayed</description>
+    <inlineHelpText>Choose the modal window size: Medium (default), Large, or X-Large</inlineHelpText>
+    <type>Picklist</type>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>medium</fullName>
+                <default>true</default>
+                <label>Medium</label>
+            </value>
+            <value>
+                <fullName>large</fullName>
+                <default>false</default>
+                <label>Large</label>
+            </value>
+            <value>
+                <fullName>x-large</fullName>
+                <default>false</default>
+                <label>X-Large</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,13 @@
+{
+    "records": [
+        {
+            "attributes": {
+                "type": "Course__c",
+                "referenceId": "Course__cRef1"
+            },
+            "Name": "Using AI in the Workplace",
+            "Active__c": true,
+            "Archived__c": false
+        }
+    ]
+}

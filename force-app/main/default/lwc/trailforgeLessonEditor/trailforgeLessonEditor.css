@@ -1,0 +1,7 @@
+:host {
+    display: block;
+}
+
+.content-textarea {
+    --slds-c-textarea-sizing-min-height: 300px;
+}

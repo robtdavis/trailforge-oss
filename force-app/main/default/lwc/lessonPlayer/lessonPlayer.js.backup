@@ -1,0 +1,812 @@
+import { LightningElement, api } from 'lwc';
+import getLessonContext from '@salesforce/apex/LessonPlayerController.getLessonContext';
+import markLessonCompleted from '@salesforce/apex/ProgressService.markLessonCompleted';
+import isModuleCompleted from '@salesforce/apex/ProgressService.isModuleCompleted';
+import getLessonQuizContext from '@salesforce/apex/QuizService.getLessonQuizContext';
+
+export default class LessonPlayer extends LightningElement {
+    @api courseId;
+    @api contactId;
+    @api enrollmentId;
+
+    lessonContext; // Contains: { courseName, enrollmentId, modules: [...] }
+    selectedLesson;
+    selectedLessonId;
+    quizContext; // Quiz data for current lesson
+    
+    showLessonModal = false;
+    showQuizModal = false;
+    isLoading = false;
+    error;
+    
+    // Quiz attempt summary for review
+    @track attemptSummary;
+    @track isLoadingAttemptSummary = false;
+    @track attemptSummaryError;
+    
+    // Current lesson progress status
+    @track currentLessonProgressStatus;
+    
+    // Module completion status map
+    @track moduleCompletionMap = {};
+
+    // Quiz state (legacy - keep for backward compatibility)
+    @track quizScore = 70;        // default demo value
+    @track quizIsSubmitting = false;
+    @track quizMessage;           // success / failure message
+    @track quizPassed;            // boolean
+    @track quizError;             // error text (if Apex fails)
+    
+    // Wave 4 Quiz state
+    @track quizContext;           // QuizContextDTO from QuizService
+    @track isLoadingQuiz = false;
+    @track quizLoadError;
+    @track selectedAnswers = {};  // Map of questionId -> optionId
+    @track isSubmittingQuiz = false;
+    @track quizResult;            // GradingResultDTO after submission
+
+    connectedCallback() {
+        console.log('=== lessonPlayer.connectedCallback ===');
+        console.log('courseId:', this.courseId);
+        console.log('contactId:', this.contactId);
+        console.log('enrollmentId:', this.enrollmentId);
+        if (this.courseId && this.contactId) {
+            this.loadLessonContext();
+        } else {
+            console.error('Missing required props - courseId or contactId');
+            this.isLoading = false;
+            this.error = 'Missing course or contact information';
+        }
+    }
+
+    get hasLessonContext() {
+        return this.lessonContext != null;
+    }
+
+    get hasModules() {
+        return this.lessonContext && 
+               this.lessonContext.modules && 
+               this.lessonContext.modules.length > 0;
+    }
+
+    get hasSelectedLesson() {
+        return this.selectedLesson && this.selectedLesson.lessonId;
+    }
+
+    loadLessonContext() {
+        console.log('=== lessonPlayer.loadLessonContext ===');
+        if (!this.courseId || !this.contactId) {
+            console.error('Missing courseId or contactId');
+            return;
+        }
+
+        this.isLoading = true;
+        this.error = undefined;
+        console.log('Calling getLessonContext...');
+
+        getLessonContext({ 
+            courseId: this.courseId, 
+            contactId: this.contactId 
+        })
+            .then(result => {
+                console.log('=== getLessonContext SUCCESS ===');
+                console.log('Result:', JSON.stringify(result));
+                this.lessonContext = this.processLessonContext(result);
+                this.isLoading = false;
+                console.log('isLoading set to false');
+            })
+            .catch(error => {
+                console.error('=== getLessonContext ERROR ===');
+                console.error('Error:', error);
+                this.error = error.body ? error.body.message : 'Error loading lesson context';
+                this.isLoading = false;
+                this.lessonContext = null;
+                console.log('isLoading set to false (error)');
+            });
+    }
+
+    processLessonContext(context) {
+        if (!context || !context.modules) {
+            return context;
+        }
+
+        // Add computed properties for easier template rendering
+        const processedContext = { ...context };
+        
+        // First pass: process lessons without row classes
+        processedContext.modules = context.modules.map(module => {
+            const processedModule = { ...module };
+            if (module.lessons) {
+                processedModule.lessons = module.lessons.map(lesson => ({
+                    ...lesson,
+                    isCompleted: lesson.status === 'Completed',
+                    rowClass: 'tf-lesson-row' // Default class, will update after selection
+                }));
+            }
+            // Add computed completion property for template
+            processedModule.isModuleCompleted = this.moduleCompletionMap[module.moduleId] === true;
+            return processedModule;
+        });
+
+        // Set initial selected lesson if not already set
+        this.setInitialSelectedLesson(processedContext);
+        
+        // Second pass: update row classes now that selection is set
+        if (this.selectedLessonId) {
+            processedContext.modules = processedContext.modules.map(module => {
+                const updatedModule = { ...module };
+                if (module.lessons) {
+                    updatedModule.lessons = module.lessons.map(lesson => ({
+                        ...lesson,
+                        rowClass: this.getLessonRowClass(lesson.lessonId)
+                    }));
+                }
+                return updatedModule;
+            });
+        }
+        
+        // Load module completion status for all modules
+        this.loadModuleCompletionStatus(processedContext);
+
+        return processedContext;
+    }
+    
+    /**
+     * Load completion status for all modules
+     */
+    loadModuleCompletionStatus(context) {
+        if (!context || !context.modules || !context.enrollmentId) {
+            return;
+        }
+        
+        // Check completion for each module
+        context.modules.forEach(module => {
+            isModuleCompleted({
+                moduleId: module.moduleId,
+                enrollmentId: context.enrollmentId
+            })
+                .then(isCompleted => {
+                    // Update the map
+                    this.moduleCompletionMap = {
+                        ...this.moduleCompletionMap,
+                        [module.moduleId]: isCompleted
+                    };
+                    
+                    // Update the specific module in lessonContext WITHOUT re-processing everything
+                    if (this.lessonContext && this.lessonContext.modules) {
+                        this.lessonContext = {
+                            ...this.lessonContext,
+                            modules: this.lessonContext.modules.map(m => {
+                                if (m.moduleId === module.moduleId) {
+                                    return { ...m, isModuleCompleted: isCompleted };
+                                }
+                                return m;
+                            })
+                        };
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking module completion:', error);
+                });
+        });
+    }
+
+    setInitialSelectedLesson(context) {
+        if (!context || !context.modules) return;
+
+        // Find first incomplete lesson, or fall back to first lesson
+        let firstLesson = null;
+        let firstIncompleteLesson = null;
+
+        for (const module of context.modules) {
+            if (!module.lessons || module.lessons.length === 0) continue;
+            
+            for (const lesson of module.lessons) {
+                if (!firstLesson) {
+                    firstLesson = lesson;
+                }
+                if (!lesson.isCompleted && !firstIncompleteLesson) {
+                    firstIncompleteLesson = lesson;
+                    break;
+                }
+            }
+            if (firstIncompleteLesson) break;
+        }
+
+        const lessonToSelect = firstIncompleteLesson || firstLesson;
+        if (lessonToSelect) {
+            console.log('=== setInitialSelectedLesson - SELECTING LESSON ===');
+            console.log('Lesson to select:', JSON.stringify(lessonToSelect));
+            this.selectedLessonId = lessonToSelect.lessonId;
+            this.selectedLesson = lessonToSelect;
+            console.log('After assignment - selectedLessonId:', this.selectedLessonId);
+            console.log('After assignment - selectedLesson:', JSON.stringify(this.selectedLesson));
+            console.log('After assignment - hasSelectedLesson getter:', this.hasSelectedLesson);
+            // Load sanitized content for initial lesson
+            this.loadSanitizedContent(lessonToSelect.lessonId);
+            // Load quiz context for initial lesson
+            this.loadQuizContext(lessonToSelect.lessonId);
+        } else {
+            console.error('=== setInitialSelectedLesson - NO LESSON TO SELECT ===');
+            console.log('firstLesson:', firstLesson);
+            console.log('firstIncompleteLesson:', firstIncompleteLesson);
+        }
+    }
+
+    getLessonRowClass(lessonId) {
+        const baseClass = 'tf-lesson-row';
+        const selectedClass = 'tf-lesson-row_selected';
+        return lessonId === this.selectedLessonId 
+            ? `${baseClass} ${selectedClass}` 
+            : baseClass;
+    }
+
+    findLessonById(lessonId) {
+        if (!this.lessonContext || !this.lessonContext.modules) return null;
+        
+        for (const module of this.lessonContext.modules) {
+            if (!module.lessons) continue;
+            const match = module.lessons.find(l => l.lessonId === lessonId);
+            if (match) return match;
+        }
+        return null;
+    }
+
+    findNextIncompleteLesson(currentLessonId) {
+        if (!this.lessonContext || !this.lessonContext.modules) return null;
+
+        let foundCurrent = false;
+        
+        for (const module of this.lessonContext.modules) {
+            if (!module.lessons) continue;
+            
+            for (const lesson of module.lessons) {
+                if (foundCurrent && !lesson.isCompleted) {
+                    return lesson;
+                }
+                if (lesson.lessonId === currentLessonId) {
+                    foundCurrent = true;
+                }
+            }
+        }
+        return null;
+    }
+
+    handleLessonClick(event) {
+        const lessonId = event.currentTarget.dataset.lessonId;
+        if (!lessonId) return;
+
+        const lesson = this.findLessonById(lessonId);
+        if (!lesson) return;
+
+        this.selectedLessonId = lessonId;
+        this.selectedLesson = lesson;
+
+        // Load sanitized content for the selected lesson
+        this.loadSanitizedContent(lessonId);
+        
+        // Load quiz context for the selected lesson
+        this.loadQuizContext(lessonId);
+
+        // Update row classes
+        this.lessonContext = this.processLessonContext(this.lessonContext);
+    }
+
+    handleNextLesson() {
+        // Mark current lesson as completed before moving to next
+        if (this.selectedLessonId && this.lessonContext && this.lessonContext.enrollmentId) {
+            markLessonCompleted({
+                enrollmentId: this.lessonContext.enrollmentId,
+                lessonId: this.selectedLessonId
+            })
+                .then(progressStatus => {
+                    this.currentLessonProgressStatus = progressStatus;
+                    
+                    const next = this.findNextIncompleteLesson(this.selectedLessonId);
+                    if (!next) {
+                        // All lessons complete or no next incomplete lesson
+                        this.loadLessonContext(); // Refresh to show updated completion
+                        return;
+                    }
+                    this.selectedLessonId = next.lessonId;
+                    this.selectedLesson = next;
+
+                    // Load sanitized content for next lesson
+                    this.loadSanitizedContent(next.lessonId);
+                    
+                    // Load quiz context for next lesson
+                    this.loadQuizContext(next.lessonId);
+
+                    // Update row classes
+                    this.lessonContext = this.processLessonContext(this.lessonContext);
+                })
+                .catch(error => {
+                    this.error = error.body ? error.body.message : 'Error marking lesson completed';
+                });
+        }
+    }
+
+    markLessonCompleteById(lessonId) {
+        if (!this.lessonContext || !this.lessonContext.enrollmentId) {
+            this.error = 'No enrollment found';
+            return;
+        }
+
+        this.isLoading = true;
+        this.error = undefined;
+
+        markLessonComplete({ 
+            enrollmentId: this.lessonContext.enrollmentId, 
+            lessonId: lessonId 
+        })
+            .then(result => {
+                this.lessonContext = this.processLessonContext(result);
+                this.isLoading = false;
+
+                // Auto-advance to next incomplete lesson
+                this.handleNextLesson();
+            })
+            .catch(error => {
+                this.error = error.body ? error.body.message : 'Error marking lesson complete';
+                this.isLoading = false;
+            });
+    }
+
+    handleMarkCurrentLessonComplete() {
+        if (!this.selectedLessonId) return;
+        this.markLessonCompleteById(this.selectedLessonId);
+    }
+
+    handleMarkComplete(event) {
+        const lessonId = event.currentTarget.dataset.lessonId;
+        this.markLessonCompleteById(lessonId);
+    }
+
+    handleQuizScoreChange(event) {
+        const value = event.target.value;
+        this.quizScore = value ? Number(value) : null;
+    }
+
+    handleSubmitQuiz() {
+        this.quizError = null;
+        this.quizMessage = null;
+
+        if (!this.lessonContext || !this.lessonContext.enrollmentId) {
+            this.quizError = 'Missing enrollment. Cannot record quiz.';
+            return;
+        }
+
+        if (this.quizScore == null || isNaN(this.quizScore)) {
+            this.quizError = 'Please enter a valid score between 0 and 100.';
+            return;
+        }
+
+        const score = Number(this.quizScore);
+        if (score < 0 || score > 100) {
+            this.quizError = 'Please enter a score between 0 and 100.';
+            return;
+        }
+
+        this.quizIsSubmitting = true;
+
+        completeQuiz({ enrollmentId: this.lessonContext.enrollmentId, score: score })
+            .then(result => {
+                // result is EnrollmentResultDTO: enrollmentId, status, progressPercentage, quizScore, quizPassed
+                this.quizPassed = result.quizPassed;
+                this.quizMessage = this.quizPassed
+                    ? `Quiz passed! Your progress has been updated to ${result.progressPercentage}%.`
+                    : 'Quiz recorded, but you did not reach the passing score.';
+
+                this.quizError = null;
+
+                // Reload lesson context to reflect updated enrollment status
+                this.loadLessonContext();
+            })
+            .catch(error => {
+                this.quizError = (error && error.body && error.body.message)
+                    ? error.body.message
+                    : 'An error occurred while recording the quiz result.';
+            })
+            .finally(() => {
+                this.quizIsSubmitting = false;
+            });
+    }
+
+    /**
+     * Load sanitized content from ContentRenderingService
+     * Replaces raw content with XSS-safe, validated content
+     */
+    loadSanitizedContent(lessonId) {
+        console.log('=== loadSanitizedContent CALLED ===');
+        console.log('lessonId:', lessonId);
+        
+        if (!lessonId) {
+            console.log('No lessonId provided - clearing content');
+            this.sanitizedContent = null;
+            return;
+        }
+
+        this.isLoadingContent = true;
+        this.contentError = null;
+        console.log('Calling getSanitizedContent for lesson:', lessonId);
+
+        getSanitizedContent({ lessonId: lessonId })
+            .then(result => {
+                console.log('=== getSanitizedContent SUCCESS ===');
+                console.log('Content result:', JSON.stringify(result));
+                // result is ContentDTO: lessonId, lessonName, contentType, sanitizedContent, externalUrl, isHtml, isMarkdown, isExternal
+                this.sanitizedContent = result;
+                this.isLoadingContent = false;
+                console.log('hasContentDTO:', this.hasContentDTO);
+                console.log('isHtmlContent:', this.isHtmlContent);
+                console.log('safeHtmlContent:', this.safeHtmlContent);
+            })
+            .catch(error => {
+                console.error('=== getSanitizedContent ERROR ===');
+                console.error('Error:', error);
+                this.contentError = error.body ? error.body.message : 'Error loading lesson content';
+                this.isLoadingContent = false;
+                this.sanitizedContent = null;
+            });
+    }
+
+    get hasContentDTO() {
+        return this.sanitizedContent != null;
+    }
+
+    get isHtmlContent() {
+        return this.hasContentDTO && this.sanitizedContent.isHtml;
+    }
+
+    get isExternalContent() {
+        return this.hasContentDTO && this.sanitizedContent.isExternal;
+    }
+
+    get safeHtmlContent() {
+        return this.isHtmlContent ? this.sanitizedContent.sanitizedContent : '';
+    }
+
+    get externalContentUrl() {
+        return this.isExternalContent ? this.sanitizedContent.externalUrl : '';
+    }
+    
+    /**
+     * Load quiz context for a lesson (Wave 4)
+     * Calls QuizService.getLessonQuizContext
+     */
+    
+    loadQuizContext(lessonId) {
+    if (!lessonId || !this.contactId) {
+        console.warn('loadQuizContext: called without lessonId or contactId', {
+            lessonId,
+            contactId: this.contactId
+        });
+        this.quizContext = null;
+        return;
+    }
+    
+    // Guard: prevent loading the same quiz multiple times
+    if (this._currentlyLoadingQuizForLesson === lessonId) {
+        console.log('loadQuizContext: already loading quiz for lesson', lessonId, '- skipping duplicate call');
+        return;
+    }
+    
+    console.log('loadQuizContext: fetching quiz for lesson', lessonId);
+    this._currentlyLoadingQuizForLesson = lessonId;
+
+    this.isLoadingQuiz = true;
+    this.quizLoadError = null;
+    this.quizResult = null; // Clear previous result
+    this.selectedAnswers = {}; // Clear previous selections
+    
+    const enrollmentId = this.lessonContext ? this.lessonContext.enrollmentId : null;
+    console.log('loadQuizContext: using enrollmentId', enrollmentId);
+    
+    getLessonQuizContext({ 
+            lessonId: lessonId, 
+            contactId: this.contactId,
+            enrollmentId: enrollmentId
+        })
+            .then(result => {
+                console.log(
+                    'QUIZ RESULT for lesson',
+                    lessonId,
+                    JSON.stringify(result)
+                );
+
+                try {
+                    // Create a deep copy since cacheable methods return read-only data
+                    let quizData = result ? JSON.parse(JSON.stringify(result)) : null;
+                    
+                    // Transform options to lightning-radio-group format
+                    if (quizData && quizData.questions) {
+                        console.log('Transforming questions for lesson', lessonId);
+                        quizData.questions = quizData.questions.map(q => ({
+                            ...q,
+                            options: q.options.map(opt => ({
+                                label: opt.answerText,
+                                value: opt.optionId
+                            }))
+                        }));
+                        console.log('Questions transformed successfully');
+                    }
+                    console.log('Setting quizContext for lesson', lessonId, 'to:', quizData);
+                    console.log('quizData.quizId =', quizData ? quizData.quizId : 'NO QUIZ DATA');
+                    console.log('quizData.lessonId =', quizData ? quizData.lessonId : 'NO QUIZ DATA');
+                    this.quizContext = quizData;
+                    this.isLoadingQuiz = false;
+                    this._currentlyLoadingQuizForLesson = null; // Clear the guard
+                    console.log('quizContext is now:', this.quizContext, 'hasQuiz:', this.hasQuiz);
+                    console.log('After assignment - quizContext.quizId:', this.quizContext ? this.quizContext.quizId : 'NULL');
+                    
+                    // Also load attempt summary if quiz exists
+                    if (quizData && quizData.quizId) {
+                        this.loadAttemptSummary(quizData.quizId, lessonId, enrollmentId);
+                    }
+                } catch (transformError) {
+                    console.error('Error transforming quiz data:', transformError);
+                    console.error('Transform error message:', transformError.message);
+                    console.error('Transform error stack:', transformError.stack);
+                    this._currentlyLoadingQuizForLesson = null; // Clear the guard on error
+                    throw transformError; // Re-throw to trigger the .catch() handler
+                }
+            })
+            .catch(error => {
+                console.error(
+                    'QUIZ ERROR for lesson',
+                    lessonId,
+                    'Error object:',
+                    error
+                );
+                console.error('Error details:', {
+                    message: error.message,
+                    body: error.body,
+                    stack: error.stack,
+                    fullError: JSON.stringify(error, Object.getOwnPropertyNames(error))
+                });
+                this.quizLoadError = error.body ? error.body.message : (error.message || 'Error loading quiz');
+                this.isLoadingQuiz = false;
+                this._currentlyLoadingQuizForLesson = null; // Clear the guard on error
+                this.quizContext = null;
+            });
+    }
+    
+    /**
+     * Load the last quiz attempt summary for review
+     */
+    loadAttemptSummary(quizId, lessonId, enrollmentId) {
+        if (!quizId || !lessonId || !this.contactId) {
+            this.attemptSummary = null;
+            return;
+        }
+        
+        this.isLoadingAttemptSummary = true;
+        this.attemptSummaryError = null;
+        
+        getLastQuizAttemptForLesson({
+            quizId: quizId,
+            lessonId: lessonId,
+            enrollmentId: enrollmentId,
+            contactId: this.contactId
+        })
+            .then(result => {
+                this.attemptSummary = result;
+                this.isLoadingAttemptSummary = false;
+            })
+            .catch(error => {
+                this.attemptSummaryError = error.body ? error.body.message : 'Error loading attempt summary';
+                this.isLoadingAttemptSummary = false;
+                this.attemptSummary = null;
+            });
+    }
+
+    /**
+     * Handle answer selection for a question
+     */
+    handleAnswerSelect(event) {
+        const questionId = event.currentTarget.dataset.questionId;
+        const optionId = event.currentTarget.value;
+        
+        this.selectedAnswers = {
+            ...this.selectedAnswers,
+            [questionId]: optionId
+        };
+    }
+    
+    /**
+     * Submit quiz attempt (Wave 4)
+     */
+    handleSubmitNewQuiz() {
+        if (!this.quizContext) {
+            return;
+        }
+        
+        // Validate all required questions answered
+        const unansweredQuestions = this.quizContext.questions.filter(q => 
+            q.required && !this.selectedAnswers[q.questionId]
+        );
+        
+        if (unansweredQuestions.length > 0) {
+            this.quizLoadError = 'Please answer all required questions before submitting.';
+            return;
+        }
+        
+        // Build submission DTO
+        const responses = this.quizContext.questions.map(q => ({
+            questionId: q.questionId,
+            selectedOptionId: this.selectedAnswers[q.questionId]
+        })).filter(r => r.selectedOptionId); // Filter out unanswered optional questions
+        
+        const submission = {
+            quizId: this.quizContext.quizId,
+            contactId: this.contactId,
+            enrollmentId: this.lessonContext ? this.lessonContext.enrollmentId : null,
+            responses: responses
+        };
+        
+        this.isSubmittingQuiz = true;
+        this.quizLoadError = null;
+        
+        submitQuizAttempt({ submissionJSON: JSON.stringify(submission) })
+            .then(result => {
+                // result is GradingResultDTO
+                this.quizResult = result;
+                this.isSubmittingQuiz = false;
+                
+                // Mark lesson as completed if quiz passed
+                if (result.passed && this.lessonContext && this.selectedLessonId) {
+                    return markLessonCompleted({
+                        enrollmentId: this.lessonContext.enrollmentId,
+                        lessonId: this.selectedLessonId
+                    }).then(progressStatus => {
+                        this.currentLessonProgressStatus = progressStatus;
+                        // Reload lesson context to reflect updated status
+                        this.loadLessonContext();
+                    });
+                }
+            })
+            .catch(error => {
+                this.quizLoadError = error.body ? error.body.message : 'Error submitting quiz';
+                this.isSubmittingQuiz = false;
+            });
+    }
+    
+    /**
+     * Computed properties for quiz UI
+     */
+    get hasQuiz() {
+        return !!(this.quizContext && this.quizContext.quizId);
+    }
+    
+    get hasQuizContext() {
+        // Check if quiz data is loaded (for embedded quiz display)
+        return this.quizContext != null && this.quizContext.questions && this.quizContext.questions.length > 0;
+    }
+    
+    get hasQuizResult() {
+        return this.quizResult != null;
+    }
+    
+    get quizResultClass() {
+        if (!this.hasQuizResult) return '';
+        return this.quizResult.passed ? 'slds-box slds-theme_success slds-m-top_medium' : 'slds-box slds-theme_error slds-m-top_medium';
+    }
+    
+    get canTakeQuiz() {
+        if (!this.quizContext) return false;
+        
+        // Check if max attempts reached
+        if (this.quizContext.maxAttempts > 0 && 
+            this.quizContext.attemptCount >= this.quizContext.maxAttempts) {
+            return false;
+        }
+        
+        // Check if retakes allowed
+        if (!this.quizContext.allowRetakes && this.quizContext.attemptCount > 0) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    get quizAttemptMessage() {
+        if (!this.quizContext) return '';
+        
+        if (this.quizContext.latestAttempt) {
+            const msg = `Previous attempt: ${this.quizContext.latestAttempt.scorePercent}% (${this.quizContext.latestAttempt.passed ? 'Passed' : 'Failed'})`;
+            if (this.quizContext.attemptCount && this.quizContext.maxAttempts > 0) {
+                return `${msg}. Attempts: ${this.quizContext.attemptCount}/${this.quizContext.maxAttempts}`;
+            }
+            return msg;
+        }
+        
+        return '';
+    }
+    
+    get quizResultIconName() {
+        return this.hasQuizResult && this.quizResult.passed ? 'utility:success' : 'utility:warning';
+    }
+    
+    get quizResultIconVariant() {
+        return this.hasQuizResult && this.quizResult.passed ? 'success' : 'warning';
+    }
+    
+    get hasAttemptSummary() {
+        return this.attemptSummary != null;
+    }
+    
+    get attemptSummaryPassedLabel() {
+        return this.attemptSummary?.passed ? 'Passed' : 'Failed';
+    }
+    
+    get attemptSummaryBadgeClass() {
+        return this.attemptSummary?.passed ? 'slds-theme_success' : 'slds-theme_error';
+    }
+    
+    get attemptFormattedDate() {
+        if (!this.attemptSummary?.attemptedOn) return '';
+        return new Date(this.attemptSummary.attemptedOn).toLocaleDateString();
+    }
+    
+    get isCurrentLessonCompleted() {
+        if (!this.selectedLesson) return false;
+        return this.selectedLesson.status === 'Completed';
+    }
+    
+    /**
+     * Check if a module is completed
+     */
+    isModuleComplete(moduleId) {
+        if (!this.lessonContext || !this.lessonContext.enrollmentId) return false;
+        return this.moduleCompletionMap[moduleId] === true;
+    }
+    
+    /**
+     * Fire event to navigate back to My Learning
+     */
+    handleBack() {
+        this.dispatchEvent(new CustomEvent('backfromlesson', {
+        bubbles: true,
+        composed: true
+        }));
+    }
+    
+    /**
+     * Fire event to review the last quiz attempt
+     */
+    handleReviewLastAttempt() {
+        if (!this.attemptSummary || !this.attemptSummary.attemptId) {
+            return;
+        }
+        
+        this.dispatchEvent(new CustomEvent('reviewquiz', {
+            detail: {
+                attemptId: this.attemptSummary.attemptId,
+                quizId: this.attemptSummary.quizId,
+                lessonId: this.attemptSummary.lessonId,
+                enrollmentId: this.attemptSummary.enrollmentId
+            },
+            bubbles: true,
+            composed: true
+        }));
+    }
+    
+    /**
+     * Fire event to app shell to navigate to standalone quiz player
+     */
+    handleStartQuiz() {
+        if (!this.quizContext || !this.quizContext.quizId) {
+            return;
+        }
+        
+        // Fire event to parent shell
+        this.dispatchEvent(new CustomEvent('startquiz', {
+            detail: {
+                quizId: this.quizContext.quizId,
+                lessonId: this.selectedLessonId
+            },
+            bubbles: true,
+            composed: true
+        }));
+    }
+}

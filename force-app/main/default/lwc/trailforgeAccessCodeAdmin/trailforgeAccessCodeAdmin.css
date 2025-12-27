@@ -1,0 +1,47 @@
+.code-display-box {
+    background: #f3f3f3;
+    border-radius: 8px;
+}
+
+.code-text {
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', 'Droid Sans Mono', monospace;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: #032d60;
+}
+
+/* Status badge colors */
+.slds-badge_success {
+    background-color: #2e844a;
+    color: white;
+}
+
+.slds-badge_warning {
+    background-color: #dd7a01;
+    color: white;
+}
+
+/* Custom horizontal definition list styling */
+.slds-dl_horizontal .slds-dl_horizontal__label {
+    width: 60px;
+    color: #706e6b;
+}
+
+.slds-dl_horizontal .slds-dl_horizontal__detail {
+    color: #181818;
+}
+
+/* Copy toast */
+.copy-toast {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Button group spacing */
+.slds-button-group {
+    display: flex;
+    gap: 0.5rem;
+}

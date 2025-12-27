@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Used_Fingerprint__c</fullName>
+    <description>Client fingerprint/identifier recorded when the code was used.</description>
+    <externalId>false</externalId>
+    <label>Used Fingerprint</label>
+    <length>255</length>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

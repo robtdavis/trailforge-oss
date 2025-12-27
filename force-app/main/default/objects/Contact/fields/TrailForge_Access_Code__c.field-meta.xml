@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TrailForge_Access_Code__c</fullName>
+    <description>Current active TrailForge access code for this contact. Cleared when code is used or expired.</description>
+    <externalId>false</externalId>
+    <label>TrailForge Access Code</label>
+    <length>40</length>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

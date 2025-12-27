@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>TrailForge Lesson Viewer</masterLabel>
+    <description>Read-only component for viewing lesson content (supports markdown, HTML, video, PDF)</description>
+    <targets>
+        <target>lightning__RecordPage</target>
+        <target>lightning__AppPage</target>
+        <target>lightning__FlowScreen</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__RecordPage">
+            <objects>
+                <object>Lesson__c</object>
+            </objects>
+            <property name="lessonId" type="String" label="Lesson ID (Optional)" description="Override the record ID if needed. Leave blank to use the current record."/>
+        </targetConfig>
+        <targetConfig targets="lightning__AppPage,lightning__FlowScreen">
+            <property name="lessonId" type="String" label="Lesson ID" description="ID of the lesson to view"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

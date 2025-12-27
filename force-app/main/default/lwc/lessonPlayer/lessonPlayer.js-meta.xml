@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>60.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Lesson Player</masterLabel>
+    <description>Course lesson player with explicit learner selection and progress tracking</description>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__AppPage">
+            <property name="hideCompleteButton" type="Boolean" default="false" label="Hide Complete Button" description="When checked, hides the Complete Lesson button on the last slide"/>
+            <property name="modalSize" type="String" default="medium" label="Modal Size" datasource="medium,large,x-large" description="Size of the lesson modal window"/>
+        </targetConfig>
+        <targetConfig targets="lightning__RecordPage">
+            <objects>
+                <object>Course__c</object>
+            </objects>
+            <property name="hideCompleteButton" type="Boolean" default="false" label="Hide Complete Button" description="When checked, hides the Complete Lesson button on the last slide"/>
+            <property name="modalSize" type="String" default="medium" label="Modal Size" datasource="medium,large,x-large" description="Size of the lesson modal window"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

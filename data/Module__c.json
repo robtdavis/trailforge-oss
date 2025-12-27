@@ -1,0 +1,41 @@
+{
+    "records": [
+        {
+            "attributes": {
+                "type": "Module__c",
+                "referenceId": "Module__cRef1"
+            },
+            "Name": "Module 1 - Protecting Company Information",
+            "Course__c": "@Course__cRef1",
+            "Order__c": 1,
+            "Archived__c": false
+        },
+        {
+            "attributes": {
+                "type": "Module__c",
+                "referenceId": "Module__cRef2"
+            },
+            "Name": "Module 3 - Governance, Escalation, and Responsible Use",
+            "Course__c": "@Course__cRef1",
+            "Archived__c": false
+        },
+        {
+            "attributes": {
+                "type": "Module__c",
+                "referenceId": "Module__cRef3"
+            },
+            "Name": "Module 4 - Building Good AI Habits Over Time",
+            "Course__c": "@Course__cRef1",
+            "Archived__c": false
+        },
+        {
+            "attributes": {
+                "type": "Module__c",
+                "referenceId": "Module__cRef4"
+            },
+            "Name": "Module 2 - Making Good AI Decisions at Work",
+            "Course__c": "@Course__cRef1",
+            "Archived__c": false
+        }
+    ]
+}

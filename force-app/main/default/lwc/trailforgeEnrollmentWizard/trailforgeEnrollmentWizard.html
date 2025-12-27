@@ -1,0 +1,418 @@
+<template>
+    <lightning-card title="Enrollment Wizard" icon-name="standard:education">
+        
+        <!-- Progress Indicator -->
+        <div class="slds-p-horizontal_medium slds-p-top_medium">
+            <lightning-progress-indicator current-step={currentStep} type="path" variant="base">
+                <lightning-progress-step label="Select Contacts" value="1" data-step="1" onclick={handleGoToStep}></lightning-progress-step>
+                <lightning-progress-step label="Select Course" value="2" data-step="2" onclick={handleGoToStep}></lightning-progress-step>
+                <lightning-progress-step label="Confirm & Enroll" value="3" data-step="3" onclick={handleGoToStep}></lightning-progress-step>
+            </lightning-progress-indicator>
+        </div>
+        
+        <!-- Error Display -->
+        <template if:true={error}>
+            <div class="slds-p-around_medium">
+                <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                    <lightning-icon icon-name="utility:error" variant="inverse" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                    <span>{error}</span>
+                </div>
+            </div>
+        </template>
+        
+        <!-- ====== STEP 1: SELECT CONTACTS ====== -->
+        <template if:true={isStep1}>
+            <div class="slds-p-around_medium">
+                
+                <!-- Toggle between Account and Global Search -->
+                <div class="slds-m-bottom_medium">
+                    <lightning-button-group>
+                        <lightning-button 
+                            label="By Account" 
+                            variant={accountButtonVariant}
+                            onclick={handleToggleGlobalSearch}
+                            class="slds-m-right_x-small">
+                        </lightning-button>
+                        <lightning-button 
+                            label="Global Search" 
+                            variant={globalSearchButtonVariant}
+                            onclick={handleToggleGlobalSearch}>
+                        </lightning-button>
+                    </lightning-button-group>
+                </div>
+                
+                <!-- Account Selection Path -->
+                <template if:false={isGlobalSearch}>
+                    <div class="slds-m-bottom_medium">
+                        <lightning-record-picker
+                            label="Select Account"
+                            placeholder="Search Accounts..."
+                            object-api-name="Account"
+                            value={selectedAccountId}
+                            onchange={handleAccountChange}>
+                        </lightning-record-picker>
+                    </div>
+                    
+                    <!-- Contact Filter -->
+                    <template if:true={selectedAccountId}>
+                        <div class="slds-m-bottom_small">
+                            <lightning-input
+                                type="search"
+                                label="Filter Contacts"
+                                placeholder="Type to filter by name, email, or title..."
+                                value={contactFilterText}
+                                onchange={handleContactFilterChange}>
+                            </lightning-input>
+                        </div>
+                        
+                        <!-- Limit Warning -->
+                        <template if:true={showContactLimitWarning}>
+                            <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-bottom_small" role="alert">
+                                <lightning-icon icon-name="utility:warning" variant="warning" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                <span>{contactLimitMessage}</span>
+                            </div>
+                        </template>
+                    </template>
+                </template>
+                
+                <!-- Global Search Path -->
+                <template if:true={isGlobalSearch}>
+                    <div class="slds-m-bottom_medium">
+                        <lightning-input
+                            type="search"
+                            label="Search All Contacts"
+                            placeholder="Enter at least 2 characters to search..."
+                            value={globalSearchTerm}
+                            onchange={handleGlobalSearchChange}>
+                        </lightning-input>
+                        <template if:true={isSearching}>
+                            <lightning-spinner alternative-text="Searching..." size="small" class="slds-m-top_small"></lightning-spinner>
+                        </template>
+                    </div>
+                </template>
+                
+                <!-- Loading Spinner -->
+                <template if:true={isLoadingContacts}>
+                    <div class="slds-p-around_large slds-text-align_center">
+                        <lightning-spinner alternative-text="Loading contacts..." size="medium"></lightning-spinner>
+                    </div>
+                </template>
+                
+                <!-- Contacts Datatable -->
+                <template if:false={isLoadingContacts}>
+                    <template if:true={displayedContacts.length}>
+                        <div class="contacts-table slds-m-bottom_medium">
+                            <lightning-datatable
+                                key-field="Id"
+                                data={displayedContacts}
+                                columns={contactColumns}
+                                selected-rows={selectedContactIds}
+                                onrowselection={handleContactSelection}
+                                show-row-number-column
+                                max-row-selection="500">
+                            </lightning-datatable>
+                        </div>
+                    </template>
+                    
+                    <!-- No Results Message -->
+                    <template if:false={displayedContacts.length}>
+                        <template if:true={selectedAccountId}>
+                            <div class="slds-illustration slds-illustration_small slds-p-around_large slds-text-align_center">
+                                <p class="slds-text-body_regular slds-text-color_weak">
+                                    No contacts found. Try a different account or use global search.
+                                </p>
+                            </div>
+                        </template>
+                        <template if:true={isGlobalSearch}>
+                            <template if:false={isSearching}>
+                                <div class="slds-illustration slds-illustration_small slds-p-around_large slds-text-align_center">
+                                    <p class="slds-text-body_regular slds-text-color_weak">
+                                        <template if:true={globalSearchTerm}>
+                                            No contacts found matching "{globalSearchTerm}"
+                                        </template>
+                                        <template if:false={globalSearchTerm}>
+                                            Enter a search term to find contacts
+                                        </template>
+                                    </p>
+                                </div>
+                            </template>
+                        </template>
+                    </template>
+                </template>
+                
+                <!-- Selected Contacts Summary -->
+                <template if:true={hasSelectedContacts}>
+                    <div class="slds-box slds-box_x-small slds-theme_shade slds-m-top_medium">
+                        <div class="slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-col slds-grow">
+                                <strong>{selectedContactCount} contact(s) selected</strong>
+                            </div>
+                            <div class="slds-col slds-shrink">
+                                <lightning-button 
+                                    label="Clear Selection" 
+                                    variant="destructive-text" 
+                                    onclick={handleClearSelection}>
+                                </lightning-button>
+                            </div>
+                        </div>
+                        
+                        <!-- Selected contacts pills -->
+                        <div class="slds-m-top_small">
+                            <lightning-pill-container>
+                                <template for:each={selectedContacts} for:item="contact">
+                                    <lightning-pill 
+                                        key={contact.Id}
+                                        label={contact.Name}
+                                        data-id={contact.Id}
+                                        onremove={handleRemoveContact}>
+                                    </lightning-pill>
+                                </template>
+                            </lightning-pill-container>
+                        </div>
+                    </div>
+                </template>
+                
+            </div>
+        </template>
+        
+        <!-- ====== STEP 2: SELECT COURSE ====== -->
+        <template if:true={isStep2}>
+            <div class="slds-p-around_medium">
+                
+                <!-- Selected Course Display -->
+                <template if:true={selectedCourse}>
+                    <div class="slds-box slds-box_x-small slds-theme_success slds-m-bottom_medium">
+                        <div class="slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-col slds-grow">
+                                <lightning-icon icon-name="standard:education" size="small" class="slds-m-right_small"></lightning-icon>
+                                <strong>{selectedCourse.Name}</strong>
+                                <template if:true={selectedCourse.Difficulty__c}>
+                                    <span class="slds-m-left_small slds-badge">{selectedCourse.Difficulty__c}</span>
+                                </template>
+                            </div>
+                            <div class="slds-col slds-shrink">
+                                <lightning-button-icon 
+                                    icon-name="utility:close" 
+                                    alternative-text="Clear selection"
+                                    onclick={handleClearCourse}>
+                                </lightning-button-icon>
+                            </div>
+                        </div>
+                        <template if:true={selectedCourse.Description__c}>
+                            <p class="slds-m-top_small slds-text-body_small">{selectedCourse.Description__c}</p>
+                        </template>
+                        <template if:true={selectedCourse.Estimated_Duration__c}>
+                            <p class="slds-m-top_x-small slds-text-body_small slds-text-color_weak">
+                                Duration: {selectedCourse.Estimated_Duration__c} minutes
+                            </p>
+                        </template>
+                    </div>
+                </template>
+                
+                <!-- Course Search -->
+                <template if:false={selectedCourse}>
+                    <div class="slds-m-bottom_medium">
+                        <lightning-input
+                            type="search"
+                            label="Search Courses"
+                            placeholder="Type to search for a course..."
+                            value={courseSearchTerm}
+                            onchange={handleCourseSearchChange}>
+                        </lightning-input>
+                    </div>
+                    
+                    <template if:true={isSearchingCourses}>
+                        <lightning-spinner alternative-text="Searching..." size="small"></lightning-spinner>
+                    </template>
+                    
+                    <!-- Course Results -->
+                    <template if:false={isSearchingCourses}>
+                        <template if:true={courseSearchResults.length}>
+                            <div class="course-list">
+                                <template for:each={courseSearchResults} for:item="course">
+                                    <div key={course.Id} 
+                                         class="slds-box slds-box_x-small slds-m-bottom_x-small course-item"
+                                         data-id={course.Id}
+                                         onclick={handleCourseSelect}>
+                                        <div class="slds-grid slds-grid_vertical-align-center">
+                                            <div class="slds-col slds-grow">
+                                                <p class="slds-text-heading_small">{course.Name}</p>
+                                                <template if:true={course.Difficulty__c}>
+                                                    <span class="slds-badge slds-m-right_x-small">{course.Difficulty__c}</span>
+                                                </template>
+                                                <template if:true={course.Estimated_Duration__c}>
+                                                    <span class="slds-text-body_small slds-text-color_weak">{course.Estimated_Duration__c} min</span>
+                                                </template>
+                                            </div>
+                                            <div class="slds-col slds-shrink">
+                                                <lightning-icon icon-name="utility:chevronright" size="x-small"></lightning-icon>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        
+                        <template if:false={courseSearchResults.length}>
+                            <div class="slds-illustration slds-illustration_small slds-p-around_large slds-text-align_center">
+                                <p class="slds-text-body_regular slds-text-color_weak">
+                                    No active courses found. Try a different search term.
+                                </p>
+                            </div>
+                        </template>
+                    </template>
+                </template>
+                
+            </div>
+        </template>
+        
+        <!-- ====== STEP 3: CONFIRM & ENROLL ====== -->
+        <template if:true={isStep3}>
+            <div class="slds-p-around_medium">
+                
+                <!-- Enrollment Results -->
+                <template if:true={showEnrollmentResults}>
+                    <div class="slds-box slds-box_x-small slds-theme_default slds-m-bottom_medium">
+                        <h3 class="slds-text-heading_small slds-m-bottom_small">
+                            <lightning-icon icon-name="utility:check" variant="success" size="small" class="slds-m-right_x-small"></lightning-icon>
+                            Enrollment Complete
+                        </h3>
+                        <p class="slds-m-bottom_medium">{enrollmentSummary}</p>
+                        
+                        <!-- Detailed Results -->
+                        <div class="enrollment-results slds-scrollable_y" style="max-height: 300px;">
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Contact</th>
+                                        <th>Status</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={enrollmentResultsForDisplay} for:item="result">
+                                        <tr key={result.contactId}>
+                                            <td>{result.contactName}</td>
+                                            <td>
+                                                <lightning-icon icon-name={result.statusIcon} size="x-small" class="slds-m-right_xx-small"></lightning-icon>
+                                                <span class={result.statusClass}>{result.status}</span>
+                                            </td>
+                                            <td>{result.message}</td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="slds-m-top_medium">
+                            <lightning-button 
+                                label="Start New Enrollment" 
+                                variant="brand" 
+                                onclick={handleStartOver}>
+                            </lightning-button>
+                        </div>
+                    </div>
+                </template>
+                
+                <!-- Confirmation View -->
+                <template if:false={showEnrollmentResults}>
+                    <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                        
+                        <!-- Contacts Summary -->
+                        <div class="slds-col slds-size_1-of-2">
+                            <div class="slds-box slds-box_x-small">
+                                <h3 class="slds-text-heading_small slds-m-bottom_small">
+                                    <lightning-icon icon-name="standard:contact" size="small" class="slds-m-right_x-small"></lightning-icon>
+                                    Contacts to Enroll
+                                </h3>
+                                <p class="slds-text-heading_large slds-m-bottom_small">{selectedContactCount}</p>
+                                <div class="slds-scrollable_y" style="max-height: 200px;">
+                                    <ul class="slds-list_dotted">
+                                        <template for:each={selectedContacts} for:item="contact">
+                                            <li key={contact.Id}>{contact.Name}</li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Course Summary -->
+                        <div class="slds-col slds-size_1-of-2">
+                            <div class="slds-box slds-box_x-small">
+                                <h3 class="slds-text-heading_small slds-m-bottom_small">
+                                    <lightning-icon icon-name="standard:education" size="small" class="slds-m-right_x-small"></lightning-icon>
+                                    Course
+                                </h3>
+                                <template if:true={selectedCourse}>
+                                    <p class="slds-text-heading_medium">{selectedCourse.Name}</p>
+                                    <template if:true={selectedCourse.Difficulty__c}>
+                                        <span class="slds-badge slds-m-top_small">{selectedCourse.Difficulty__c}</span>
+                                    </template>
+                                    <template if:true={selectedCourse.Description__c}>
+                                        <p class="slds-m-top_small slds-text-body_small">{selectedCourse.Description__c}</p>
+                                    </template>
+                                </template>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <!-- Enroll Button -->
+                    <div class="slds-text-align_center slds-m-top_large">
+                        <lightning-button
+                            label={enrollButtonLabel}
+                            variant="brand"
+                            onclick={handleEnroll}
+                            disabled={cannotEnroll}
+                            icon-name="utility:add">
+                        </lightning-button>
+                        <template if:true={isEnrolling}>
+                            <lightning-spinner alternative-text="Enrolling..." size="small" class="slds-m-left_small"></lightning-spinner>
+                        </template>
+                    </div>
+                </template>
+                
+            </div>
+        </template>
+        
+        <!-- Footer Navigation -->
+        <div slot="footer" class="slds-p-around_medium slds-border_top">
+            <div class="slds-grid slds-grid_align-spread">
+                <div class="slds-col">
+                    <template if:false={isStep1}>
+                        <template if:false={showEnrollmentResults}>
+                            <lightning-button 
+                                label="Back" 
+                                onclick={handleBack}
+                                icon-name="utility:back">
+                            </lightning-button>
+                        </template>
+                    </template>
+                </div>
+                <div class="slds-col slds-text-align_right">
+                    <template if:true={isStep1}>
+                        <lightning-button 
+                            label="Next: Select Course" 
+                            variant="brand" 
+                            onclick={handleNext}
+                            disabled={cannotProceedToStep2}
+                            icon-name="utility:forward"
+                            icon-position="right">
+                        </lightning-button>
+                    </template>
+                    <template if:true={isStep2}>
+                        <lightning-button 
+                            label="Next: Review & Enroll" 
+                            variant="brand" 
+                            onclick={handleNext}
+                            disabled={cannotProceedToStep3}
+                            icon-name="utility:forward"
+                            icon-position="right">
+                        </lightning-button>
+                    </template>
+                </div>
+            </div>
+        </div>
+        
+    </lightning-card>
+</template>
