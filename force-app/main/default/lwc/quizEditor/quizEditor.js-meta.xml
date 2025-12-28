@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-License-Identifier: MIT
+TrailForge — Open Source under the MIT License
+Copyright (c) 2025 Robert Davis
+See the LICENSE file in the project root for full license text.
+-->
 <LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>65.0</apiVersion>
     <isExposed>false</isExposed>

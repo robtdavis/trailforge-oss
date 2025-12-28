@@ -1,3 +1,9 @@
+//
+// SPDX-License-Identifier: MIT
+// TrailForge — Open Source under the MIT License
+// Copyright (c) 2025 Robert Davis
+// See the LICENSE file in the project root for full license text.
+//
 /**
  * Test data factory for quiz-related entities
  * Provides helper methods to create test data for quiz submission and review flows

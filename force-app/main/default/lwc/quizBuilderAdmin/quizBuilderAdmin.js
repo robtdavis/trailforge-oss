@@ -1,3 +1,9 @@
+//
+// SPDX-License-Identifier: MIT
+// TrailForge — Open Source under the MIT License
+// Copyright (c) 2025 Robert Davis
+// See the LICENSE file in the project root for full license text.
+//
 import { LightningElement, api, track, wire } from 'lwc';
 import getAllQuizzes from '@salesforce/apex/QuizAdminController.getAllQuizzes';
 import getQuizDetails from '@salesforce/apex/QuizAdminController.getQuizDetails';

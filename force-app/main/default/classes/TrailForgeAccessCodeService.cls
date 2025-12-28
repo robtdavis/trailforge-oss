@@ -1,3 +1,9 @@
+//
+// SPDX-License-Identifier: MIT
+// TrailForge — Open Source under the MIT License
+// Copyright (c) 2025 Robert Davis
+// See the LICENSE file in the project root for full license text.
+//
 /**
  * Service class for TrailForge access code management.
  * Handles code generation, validation, and session management.

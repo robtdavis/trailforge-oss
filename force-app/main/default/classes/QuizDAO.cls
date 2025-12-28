@@ -1,3 +1,9 @@
+//
+// SPDX-License-Identifier: MIT
+// TrailForge — Open Source under the MIT License
+// Copyright (c) 2025 Robert Davis
+// See the LICENSE file in the project root for full license text.
+//
 /**
  * @description Data Access Object for quiz-related objects
  * Provides bulk-safe query methods for Quiz__c, Quiz_Question__c, Quiz_Answer_Option__c,

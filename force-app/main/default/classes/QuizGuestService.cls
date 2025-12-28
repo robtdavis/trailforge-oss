@@ -1,3 +1,9 @@
+//
+// SPDX-License-Identifier: MIT
+// TrailForge — Open Source under the MIT License
+// Copyright (c) 2025 Robert Davis
+// See the LICENSE file in the project root for full license text.
+//
 /**
  * @description Guest-accessible service for quiz functionality.
  * Runs WITHOUT SHARING to allow guest users to access quiz data.

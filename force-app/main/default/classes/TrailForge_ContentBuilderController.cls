@@ -1,3 +1,9 @@
+//
+// SPDX-License-Identifier: MIT
+// TrailForge — Open Source under the MIT License
+// Copyright (c) 2025 Robert Davis
+// See the LICENSE file in the project root for full license text.
+//
 /**
  * @description Controller for TrailForge Content Builder Admin
  * Handles creation of Course, Module, and Lesson records in a single transaction
