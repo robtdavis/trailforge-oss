@@ -38,6 +38,37 @@ https://test.salesforce.com/packaging/installPackage.apexp?p0=04tgK0000008cOHQAY
 ```
 
 ---
+## 🧪 Try TrailForge — No Login Needed
+
+You don’t have to install anything to see TrailForge in action. Just visit the public Experience Cloud site below and jump straight into learning:
+
+🔗 **TrailForge Demo Site**  
+https://orgfarm-3b0990e901-dev-ed.develop.my.site.com/TrailForge/s/
+
+You’ll land on a page that looks like this:
+
+![TrailForge Experience Site](docs/screenshots/TestDriveExpSite.png)
+
+### 👇 Two ways to explore
+
+#### 🔐 Have an access code?
+Enter it in the **Access Code** box to sign in as a learner.
+
+#### 👤 No code? No problem.
+Click **Continue as Guest** to try TrailForge’s publicly available content — including quizzes — without creating an account or logging in.
+
+> 🐮 **Matilda says:**  
+> “Learning shouldn’t require three passwords, a security token, and your firstborn.  
+> Click *Continue as Guest* and try a quiz right now. See how it feels.”
+
+Guest access is perfect for:
+
+✔ Trying out TrailForge  
+✔ Sharing sample training  
+✔ Letting stakeholders experience the learner view  
+✔ Showing that not all LMS tools require duct tape and four meetings to use
+
+---
 
 ## 🎥 See TrailForge in Action
 
@@ -59,44 +90,10 @@ Matilda says: **“Show, don’t tell. Preferably in under 10 seconds.”**
 
 ---
 
-## 🧠 Core Concepts
 
-TrailForge content is structured like this:
 
-**Course → Module → Lesson → Quiz → Questions → Answers**
 
-Learners also have:
-
-- **Enrollments**
-- **Quiz Attempts**
-- **Completion Status**
-
-A full data-model walkthrough lives in:
-
-📘 `docs/DATA-MODEL.md`
-
----
-
-## 🚀 Quick Start (Developers)
-
-```bash
-# Clone the repo
-git clone https://github.com/robtdavis/trailforge-oss.git 
-cd trailforge
-
-# Authorize an org
-sf org login web --set-default -a trailforge-dev
-
-# Deploy metadata
-sf project deploy start
-
-# Load demo content
-sf data tree import -p ./data/trailforge-seed-plan.json
-
-# Open TrailForge
-sf org open
-
-```
+ 
 ## 📝 License
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)

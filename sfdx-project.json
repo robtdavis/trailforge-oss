@@ -1,12 +1,20 @@
 {
   "packageDirectories": [
     {
+      "versionName": "ver 0.1",
+      "versionNumber": "0.1.0.NEXT",
       "path": "force-app",
-      "default": true
+      "default": true,
+      "package": "TrailForge",
+      "versionDescription": ""
     }
   ],
   "name": "TrailForge",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "65.0"
+  "sourceApiVersion": "65.0",
+  "packageAliases": {
+    "TrailForge": "0HogK0000000oRRSAY",
+    "TrailForge@0.1.0-1": "04tgK0000008cOHQAY"
+  }
 }
