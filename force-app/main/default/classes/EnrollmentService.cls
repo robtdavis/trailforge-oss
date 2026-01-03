@@ -36,7 +36,7 @@ public with sharing class EnrollmentService {
             // Query enrollment with current progress
             List<Enrollment__c> enrollments = [
                 SELECT Id, Contact__c, Course__c, Status__c, 
-                       Progress_Percentage__c, Quiz_Passed__c, Quiz_Score__c
+                       Progress_Percentage__c, Quiz_Passed__c, Quiz_Score__c, Completion_Date__c
                 FROM Enrollment__c
                 WHERE Id = :enrollmentId
                 LIMIT 1
@@ -94,7 +94,8 @@ public with sharing class EnrollmentService {
                    Progress_Percentage__c, 
                    Status__c, 
                    Quiz_Score__c, 
-                   Quiz_Passed__c
+                   Quiz_Passed__c,
+                   Completion_Date__c
             FROM Enrollment__c
             WHERE Id = :enrollmentId
             LIMIT 1

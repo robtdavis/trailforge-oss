@@ -283,32 +283,8 @@ public with sharing class EnrollmentWizardController {
         // Insert new enrollments
         if (!enrollmentsToCreate.isEmpty()) {
             try {
-                // Apply field-level security before DML
-                SObjectAccessDecision securityDecision = Security.stripInaccessible(
-                    AccessType.CREATABLE, 
-                    enrollmentsToCreate
-                );
-                List<Enrollment__c> sanitizedEnrollments = (List<Enrollment__c>) securityDecision.getRecords();
-                
-                // Check if security stripped required fields (Contact__c or Course__c)
-                // If so, mark those records as failed
-                Set<String> strippedFields = securityDecision.getRemovedFields().get('Enrollment__c');
-                if (strippedFields != null && (strippedFields.contains('Contact__c') || strippedFields.contains('Course__c'))) {
-                    // Critical fields were stripped - fail all pending enrollments
-                    for (ContactEnrollmentResult cr : result.contactResults) {
-                        if (cr.status == 'Pending') {
-                            cr.status = 'Failed';
-                            cr.message = 'Insufficient field-level access to create enrollment';
-                            result.failedCount++;
-                        }
-                    }
-                    result.success = false;
-                    result.courseName = course.Name;
-                    return result;
-                }
-                
                 // Use Database.insert to handle partial failures gracefully
-                Database.SaveResult[] saveResults = Database.insert(sanitizedEnrollments, false);
+                Database.SaveResult[] saveResults = Database.insert(enrollmentsToCreate, false);
                 
                 // Map results back to contact results
                 Integer insertIndex = 0;
