@@ -23,6 +23,21 @@ TrailForge is a **lightweight, Salesforce-native learning platform** built for t
 If your LMS makes people roll their eyes… TrailForge will feel like a breath of fresh barn air.
 
 ---
+Howdy, friend! I’m Matilda — your unofficial TrailForge welcome committee. If you’d like to install TrailForge into your Salesforce org, just use the links below. Pick the one that matches where you’re installing the unlocked package — Production/Developer Edition or Sandbox — and Salesforce will guide you the rest of the way. I’ll keep your seat warm while you’re gone. 💺✨
+
+## Production / Developer Edition
+
+```
+https://login.salesforce.com/packaging/installPackage.apexp?p0=04tgK0000008cOHQAY
+
+```
+## Sandbox
+
+```
+https://test.salesforce.com/packaging/installPackage.apexp?p0=04tgK0000008cOHQAY
+```
+
+---
 
 ## 🎥 See TrailForge in Action
 
