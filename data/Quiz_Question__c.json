@@ -5,7 +5,6 @@
                 "type": "Quiz_Question__c",
                 "referenceId": "Quiz_Question__cRef1"
             },
-            "Name": "QQ-00012",
             "Quiz__c": "@Quiz__cRef1",
             "Question_Text__c": "What is the best next step if you want to continue learning about responsible AI use?",
             "Question_Type__c": "MultipleChoice",
@@ -19,7 +18,6 @@
                 "type": "Quiz_Question__c",
                 "referenceId": "Quiz_Question__cRef2"
             },
-            "Name": "QQ-00004",
             "Quiz__c": "@Quiz__cRef1",
             "Question_Text__c": "Which of the following is appropriate to paste into an AI tool during live work?",
             "Question_Type__c": "MultipleChoice",
@@ -33,7 +31,6 @@
                 "type": "Quiz_Question__c",
                 "referenceId": "Quiz_Question__cRef3"
             },
-            "Name": "QQ-00006",
             "Quiz__c": "@Quiz__cRef1",
             "Question_Text__c": "Which situation should prompt you to pause and escalate before using AI?",
             "Question_Type__c": "MultipleChoice",
@@ -47,7 +44,6 @@
                 "type": "Quiz_Question__c",
                 "referenceId": "Quiz_Question__cRef4"
             },
-            "Name": "QQ-00007",
             "Quiz__c": "@Quiz__cRef1",
             "Question_Text__c": "What is the main risk of pasting real identifiers (like order numbers) into AI tools during live work?",
             "Question_Type__c": "MultipleChoice",
@@ -61,7 +57,6 @@
                 "type": "Quiz_Question__c",
                 "referenceId": "Quiz_Question__cRef5"
             },
-            "Name": "QQ-00011",
             "Quiz__c": "@Quiz__cRef1",
             "Question_Text__c": "Which behavior demonstrates good AI judgment?",
             "Question_Type__c": "MultipleChoice",
@@ -75,7 +70,6 @@
                 "type": "Quiz_Question__c",
                 "referenceId": "Quiz_Question__cRef6"
             },
-            "Name": "QQ-00005",
             "Quiz__c": "@Quiz__cRef1",
             "Question_Text__c": "Why is it acceptable to include fictional order numbers in training materials?",
             "Question_Type__c": "MultipleChoice",
@@ -89,7 +83,6 @@
                 "type": "Quiz_Question__c",
                 "referenceId": "Quiz_Question__cRef7"
             },
-            "Name": "QQ-00003",
             "Quiz__c": "@Quiz__cRef1",
             "Question_Text__c": "What is the primary role of AI in the workplace according to this training?",
             "Question_Type__c": "MultipleChoice",
@@ -103,7 +96,6 @@
                 "type": "Quiz_Question__c",
                 "referenceId": "Quiz_Question__cRef8"
             },
-            "Name": "QQ-00008",
             "Quiz__c": "@Quiz__cRef1",
             "Question_Text__c": "Which statement best describes “human-in-the-loop”?",
             "Question_Type__c": "MultipleChoice",
@@ -117,7 +109,6 @@
                 "type": "Quiz_Question__c",
                 "referenceId": "Quiz_Question__cRef9"
             },
-            "Name": "QQ-00009",
             "Quiz__c": "@Quiz__cRef1",
             "Question_Text__c": "Which is an example of a safe AI prompt for live work?",
             "Question_Type__c": "MultipleChoice",
@@ -131,7 +122,6 @@
                 "type": "Quiz_Question__c",
                 "referenceId": "Quiz_Question__cRef10"
             },
-            "Name": "QQ-00010",
             "Quiz__c": "@Quiz__cRef1",
             "Question_Text__c": "According to the training, why do most AI mistakes happen at work?",
             "Question_Type__c": "MultipleChoice",
