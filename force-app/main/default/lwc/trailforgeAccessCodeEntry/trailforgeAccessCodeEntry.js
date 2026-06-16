@@ -261,10 +261,61 @@ export default class TrailforgeAccessCodeEntry extends LightningElement {
      * Navigate to the configured learning page
      */
     navigateToLearning() {
-        if (this.navigationUrl) {
+        const targetUrl = this.resolveNavigationUrl(this.navigationUrl);
+        if (targetUrl) {
             // Use direct window.location for guest users (avoids auth redirect)
-            window.location.href = this.navigationUrl;
+            window.location.href = targetUrl;
         }
+    }
+
+    /**
+     * Resolve configured navigation URL against the current site path.
+     * Keeps /s/... routes on the active Experience site when multiple sites exist.
+     */
+    resolveNavigationUrl(rawUrl) {
+        if (!rawUrl || !rawUrl.trim()) {
+            return null;
+        }
+
+        const trimmedUrl = rawUrl.trim();
+
+        // Absolute/protocol-relative URLs should be used as configured.
+        if (/^(https?:)?\/\//i.test(trimmedUrl)) {
+            return trimmedUrl;
+        }
+
+        const sitePrefix = this.getCurrentSitePrefix();
+
+        // For Experience Builder defaults like /s/page-name, keep the current site prefix.
+        if (trimmedUrl.startsWith('/s/')) {
+            return `${sitePrefix}${trimmedUrl}`;
+        }
+
+        // For other root-relative paths, keep them on the current site unless explicitly prefixed.
+        if (trimmedUrl.startsWith('/')) {
+            if (sitePrefix && trimmedUrl.startsWith(`${sitePrefix}/`)) {
+                return trimmedUrl;
+            }
+            return `${sitePrefix}${trimmedUrl}`;
+        }
+
+        // Relative paths are already site-relative.
+        return trimmedUrl;
+    }
+
+    /**
+     * Derive the current Experience site prefix from the URL path.
+     * Example: /partner/s/access -> /partner
+     */
+    getCurrentSitePrefix() {
+        const currentPath = window.location?.pathname || '';
+        const siteIndex = currentPath.indexOf('/s/');
+
+        if (siteIndex > 0) {
+            return currentPath.substring(0, siteIndex);
+        }
+
+        return '';
     }
 
     /**
